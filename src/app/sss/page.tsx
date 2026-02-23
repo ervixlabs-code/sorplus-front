@@ -163,6 +163,7 @@ function FaqAccordion({
 }
 
 /** 🔧 API normalize helpers */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function pickArray(payload: any): any[] {
   if (Array.isArray(payload)) return payload
   if (Array.isArray(payload?.items)) return payload.items
@@ -170,6 +171,7 @@ function pickArray(payload: any): any[] {
   return []
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function safeStr(v: any, fallback = ""): string {
   if (typeof v === "string") return v
   if (v == null) return fallback
@@ -206,33 +208,33 @@ export default function Page() {
         const faqsArr = pickArray(faqsRaw)
 
         const catNames: string[] = catsArr
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           .map((c: any) => safeStr(c?.name ?? c?.title ?? c?.slug ?? c))
           .filter(Boolean)
 
         // ✅ fallback: kategoriler boşsa, faqs'tan derive et (STRING olarak garantile)
         const derivedCats: string[] = Array.from(
-          new Set(
-            faqsArr
-              .map((f: any) =>
-                safeStr(
-                  f?.category?.name ??
-                    f?.categoryName ??
-                    f?.faqCategory?.name ??
-                    f?.faqCategoryName ??
-                    f?.category ??
-                    "Genel"
-                )
-              )
-              .filter(Boolean)
-          )
-        ).map((x) => safeStr(x)).filter(Boolean)
+  new Set(
+    faqsArr
+      .map((f: any) =>
+        safeStr(
+          f?.category?.name ??
+            f?.categoryName ??
+            f?.faqCategory?.name ??
+            f?.faqCategoryName ??
+            f?.category ??
+            "Genel"
+        )
+      )
+      .filter(Boolean)
+  )
+).map((x) => safeStr(x)).filter(Boolean)
 
         // ✅ burada kesin string[] olsun
-        const finalCats: string[] = (catNames.length ? catNames : derivedCats)
-          .map((x) => safeStr(x))
-          .filter(Boolean)
-          .sort((a: string, b: string) => a.localeCompare(b, "tr"))
+        const baseCats = (catNames.length ? catNames : derivedCats) as string[]
+        const finalCats: string[] = baseCats.slice().sort((a, b) => a.localeCompare(b, "tr"))
 
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const normalized: FaqItem[] = faqsArr.map((f: any) => {
           const id = safeStr(f?.id ?? f?._id ?? crypto?.randomUUID?.() ?? Math.random())
           const category = safeStr(
@@ -248,6 +250,7 @@ export default function Page() {
           const answerText = safeStr(f?.answer ?? f?.a ?? f?.content ?? "")
 
           const tags: string[] | undefined = Array.isArray(f?.tags)
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             ? f.tags.map((t: any) => safeStr(t)).filter(Boolean)
             : undefined
 
@@ -264,6 +267,7 @@ export default function Page() {
         setCategories(finalCats)
         setItems(normalized)
         setOpenId((prev) => prev ?? (normalized[0]?.id ?? null))
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (e: any) {
         if (!alive) return
         setErr(e?.message ?? "Bir hata oluştu.")
