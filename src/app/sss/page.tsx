@@ -116,11 +116,7 @@ function FaqAccordion({
     >
       <div className="pointer-events-none absolute inset-0 opacity-50 [background-image:radial-gradient(circle_at_20%_0%,rgba(99,102,241,0.18),transparent_45%),radial-gradient(circle_at_90%_30%,rgba(16,185,129,0.12),transparent_55%)]" />
 
-      <button
-        type="button"
-        onClick={onToggle}
-        className="relative flex w-full items-start justify-between gap-4"
-      >
+      <button type="button" onClick={onToggle} className="relative flex w-full items-start justify-between gap-4">
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">
             <span className="inline-flex items-center rounded-full border border-white/10 bg-white/10 px-2.5 py-1 text-[11px] font-semibold text-white/85">
@@ -214,25 +210,30 @@ export default function Page() {
 
         // ✅ fallback: kategoriler boşsa, faqs'tan derive et (STRING olarak garantile)
         const derivedCats: string[] = Array.from(
-  new Set(
-    faqsArr
-      .map((f: any) =>
-        safeStr(
-          f?.category?.name ??
-            f?.categoryName ??
-            f?.faqCategory?.name ??
-            f?.faqCategoryName ??
-            f?.category ??
-            "Genel"
+          new Set(
+            faqsArr
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              .map((f: any) =>
+                safeStr(
+                  f?.category?.name ??
+                    f?.categoryName ??
+                    f?.faqCategory?.name ??
+                    f?.faqCategoryName ??
+                    f?.category ??
+                    "Genel"
+                )
+              )
+              .filter(Boolean)
+          )
         )
-      )
-      .filter(Boolean)
-  )
-).map((x) => safeStr(x)).filter(Boolean)
+          .map((x) => safeStr(x))
+          .filter(Boolean)
 
         // ✅ burada kesin string[] olsun
-        const baseCats = (catNames.length ? catNames : derivedCats) as string[]
-        const finalCats: string[] = baseCats.slice().sort((a, b) => a.localeCompare(b, "tr"))
+        const baseCats: string[] = (catNames.length ? catNames : derivedCats).filter(Boolean)
+
+        // ✅ Vercel TS "unknown" hatasını %100 kır: comparator paramlarını string yap
+        const finalCats: string[] = baseCats.slice().sort((a: string, b: string) => a.localeCompare(b, "tr"))
 
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const normalized: FaqItem[] = faqsArr.map((f: any) => {
@@ -267,7 +268,7 @@ export default function Page() {
         setCategories(finalCats)
         setItems(normalized)
         setOpenId((prev) => prev ?? (normalized[0]?.id ?? null))
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (e: any) {
         if (!alive) return
         setErr(e?.message ?? "Bir hata oluştu.")
