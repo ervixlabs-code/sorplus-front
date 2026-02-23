@@ -1,4 +1,4 @@
-// app/sss/page.tsx
+// src/app/sss/page.tsx
 "use client"
 
 import React, { useEffect, useMemo, useState } from "react"
@@ -18,7 +18,8 @@ type FaqItem = {
   tags?: string[]
 }
 
-const API_BASE = "https://sorplus-admin-backend.onrender.com"
+/** ✅ Prod için ENV kullan: Vercel -> NEXT_PUBLIC_API_BASE */
+const API_BASE = (process.env.NEXT_PUBLIC_API_BASE || "https://sorplus-admin-backend.onrender.com").replace(/\/+$/, "")
 
 function formatTR(n: number) {
   try {
@@ -145,7 +146,6 @@ function FaqAccordion({
             open && "bg-white/15"
           )}
         >
-          {/* chevron iconu kaldırmak istemezsen geri ekleriz; şimdilik sade tutuyorum */}
           <span className={clsx("text-xs font-semibold", open && "opacity-90")}>{open ? "—" : "+"}</span>
         </span>
       </button>
@@ -162,8 +162,8 @@ function FaqAccordion({
   )
 }
 
-/** 🔧 API normalize helpers (response shape farklıysa da çalışsın) */
-function pickArray(payload: any) {
+/** 🔧 API normalize helpers */
+function pickArray(payload: any): any[] {
   if (Array.isArray(payload)) return payload
   if (Array.isArray(payload?.items)) return payload.items
   if (Array.isArray(payload?.data)) return payload.data
@@ -192,9 +192,9 @@ export default function Page() {
   const [q, setQ] = useState("")
   const [openId, setOpenId] = useState<string | null>(null)
 
-  // ✅ API’den SSS + kategoriler
   useEffect(() => {
     let alive = true
+
     ;(async () => {
       try {
         setLoading(true)
@@ -209,8 +209,8 @@ export default function Page() {
           .map((c: any) => safeStr(c?.name ?? c?.title ?? c?.slug ?? c))
           .filter(Boolean)
 
-        // fallback: kategoriler boşsa, faqs'tan derive et
-        const derivedCats = Array.from(
+        // ✅ fallback: kategoriler boşsa, faqs'tan derive et (STRING olarak garantile)
+        const derivedCats: string[] = Array.from(
           new Set(
             faqsArr
               .map((f: any) =>
@@ -225,9 +225,13 @@ export default function Page() {
               )
               .filter(Boolean)
           )
-        )
+        ).map((x) => safeStr(x)).filter(Boolean)
 
-        const finalCats = (catNames.length ? catNames : derivedCats).sort((a, b) => a.localeCompare(b, "tr"))
+        // ✅ burada kesin string[] olsun
+        const finalCats: string[] = (catNames.length ? catNames : derivedCats)
+          .map((x) => safeStr(x))
+          .filter(Boolean)
+          .sort((a: string, b: string) => a.localeCompare(b, "tr"))
 
         const normalized: FaqItem[] = faqsArr.map((f: any) => {
           const id = safeStr(f?.id ?? f?._id ?? crypto?.randomUUID?.() ?? Math.random())
@@ -300,7 +304,6 @@ export default function Page() {
         }
       `}</style>
 
-      {/* 🌌 GLOBAL DARK GRID BACKGROUND */}
       <div className="pointer-events-none fixed inset-0 -z-10">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_10%,rgba(99,102,241,0.22),transparent_45%),radial-gradient(circle_at_80%_20%,rgba(16,185,129,0.20),transparent_40%),radial-gradient(circle_at_50%_90%,rgba(249,115,22,0.16),transparent_50%)]" />
         <div
@@ -316,21 +319,17 @@ export default function Page() {
         <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/60" />
       </div>
 
-      {/* TOP INFO BAND (sade) */}
       <div className="border-b border-white/10 bg-[#1F2333] text-white">
         <div className="mx-auto flex w-full max-w-screen-2xl items-center justify-between gap-3 px-6 py-2.5 lg:px-10 2xl:px-14">
           <div className="text-sm">
             Sıkça Sorulan Sorular • <span className="ml-2 text-white/70">{loading ? "yükleniyor" : "canlı"}</span>
           </div>
-
-          {/* Public için gereksiz: kısayol hintini kaldırdım */}
         </div>
       </div>
 
       <PublicTopbar subtitle="Şikayetler" showSearchStub={false} nextUrlForAuth="/sikayetler" />
 
       <main className="mx-auto w-full max-w-screen-2xl px-6 pb-16 pt-8 lg:px-10 2xl:px-14">
-        {/* BREADCRUMB + META */}
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <button
             type="button"
@@ -348,7 +347,6 @@ export default function Page() {
           </div>
         </div>
 
-        {/* HERO */}
         <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-12">
           <div className="lg:col-span-7">
             <div className="relative overflow-hidden rounded-[34px] border border-white/10 bg-white/5 p-7 shadow-[0_35px_120px_-90px_rgba(0,0,0,0.85)] backdrop-blur">
@@ -474,7 +472,6 @@ export default function Page() {
           </div>
         </div>
 
-        {/* LIST */}
         <div className="mt-8">
           <div className="flex items-center justify-between">
             <div className="text-[18px] font-extrabold tracking-tight text-white">Sorular</div>
@@ -510,8 +507,6 @@ export default function Page() {
             ) : null}
           </div>
         </div>
-
-        {/* ✅ Public için alt “debug/cta” bandını komple kaldırdık */}
       </main>
 
       <Footer />
