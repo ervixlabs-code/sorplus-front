@@ -1,7 +1,9 @@
 // app/kayit/page.tsx
 "use client"
 
-import React, { useEffect, useMemo, useRef, useState } from "react"
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
+import React, { Suspense, useEffect, useMemo, useRef, useState } from "react"
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
 import clsx from "clsx"
@@ -26,8 +28,7 @@ const LS_SIGNUP_EMAIL_KEY = "signup_email_remembered_v1"
 const LS_AUTH_TOKEN_KEY = "sv_auth_token_v1"
 const LS_AUTH_USER_KEY = "sv_auth_user_v1"
 
-const API_BASE =
-  (process.env.NEXT_PUBLIC_API_BASE || "http://localhost:3002").replace(/\/+$/, "")
+const API_BASE = (process.env.NEXT_PUBLIC_API_BASE || "http://localhost:3002").replace(/\/+$/, "")
 
 function PillButton({
   children,
@@ -56,12 +57,7 @@ function PillButton({
       : "border border-white/15 bg-white/10 text-white shadow-sm backdrop-blur hover:bg-white/15 focus:ring-white/15"
 
   return (
-    <button
-      type={type}
-      onClick={onClick}
-      disabled={disabled}
-      className={clsx(base, styles, className)}
-    >
+    <button type={type} onClick={onClick} disabled={disabled} className={clsx(base, styles, className)}>
       {children}
     </button>
   )
@@ -93,13 +89,7 @@ function Field({
 }
 
 type NoticeKind = "info" | "error" | "success"
-function Notice({
-  kind,
-  children,
-}: {
-  kind: NoticeKind
-  children: React.ReactNode
-}) {
+function Notice({ kind, children }: { kind: NoticeKind; children: React.ReactNode }) {
   const styles =
     kind === "error"
       ? "border-orange-400/20 bg-orange-400/10 text-orange-100"
@@ -142,7 +132,11 @@ function isValidE164(phone: string) {
   return /^\+\d{10,15}$/.test(phone)
 }
 
-export default function Page() {
+/**
+ * ✅ useSearchParams() -> Suspense içinde olmalı.
+ * Bu yüzden hook'u inner component'e taşıyoruz.
+ */
+function KayitInner() {
   const router = useRouter()
   const sp = useSearchParams()
   const nextUrl = useMemo(() => sp.get("next") || "/", [sp])
@@ -153,7 +147,6 @@ export default function Page() {
   const [lastName, setLastName] = useState("")
   const [email, setEmail] = useState("")
 
-  // ✅ NEW
   const [phone, setPhone] = useState("")
   const [city, setCity] = useState("")
 
@@ -181,7 +174,6 @@ export default function Page() {
     const em = email.trim()
     if (!em || !em.includes("@")) return "Lütfen geçerli bir e-posta adresi gir."
 
-    // ✅ NEW validations
     const ph = normalizePhoneInput(phone)
     if (!ph) return "Telefon alanı zorunlu."
     if (!isValidE164(ph)) return "Telefon formatı geçersiz. Örn: +905551112233"
@@ -224,16 +216,12 @@ export default function Page() {
 
       const data = await res.json().catch(() => null)
 
-      if (!res.ok) {
-        throw data || { message: `Kayıt başarısız (${res.status})` }
-      }
+      if (!res.ok) throw data || { message: `Kayıt başarısız (${res.status})` }
 
       const accessToken = data?.accessToken
       const user = data?.user
 
-      if (!accessToken || !user) {
-        throw { message: "Sunucudan beklenmeyen cevap geldi." }
-      }
+      if (!accessToken || !user) throw { message: "Sunucudan beklenmeyen cevap geldi." }
 
       try {
         localStorage.setItem(LS_SIGNUP_EMAIL_KEY, email.trim())
@@ -256,8 +244,13 @@ export default function Page() {
   return (
     <div className="relative min-h-screen bg-[#0B1020] text-slate-100">
       <style jsx global>{`
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .no-scrollbar::-webkit-scrollbar {
+          display: none;
+        }
+        .no-scrollbar {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
       `}</style>
 
       {/* 🌌 BG */}
@@ -284,9 +277,7 @@ export default function Page() {
               <Sparkles className="h-5 w-5" />
             </div>
             <div className="min-w-0 leading-tight">
-              <div className="truncate text-base font-extrabold tracking-tight text-white">
-                Deneyim
-              </div>
+              <div className="truncate text-base font-extrabold tracking-tight text-white">Deneyim</div>
               <div className="text-[11px] text-white/60">Kayıt</div>
             </div>
           </Link>
@@ -326,8 +317,7 @@ export default function Page() {
               Topluluğa katıl
             </h1>
             <p className="mt-3 max-w-xl text-sm leading-relaxed text-white/70">
-              Kayıt olunca yorumlar, “Ben de yaşadım” ve içerik takibi aktif olur. İstersen daha sonra
-              görünür adını düzenleyebilirsin.
+              Kayıt olunca yorumlar, “Ben de yaşadım” ve içerik takibi aktif olur.
             </p>
 
             <div className="mt-6 rounded-[26px] border border-white/10 bg-white/5 p-5 backdrop-blur sm:p-6">
@@ -336,9 +326,9 @@ export default function Page() {
                   <BadgeCheck className="h-5 w-5 text-indigo-300" />
                 </div>
                 <div>
-                  <div className="text-sm font-semibold text-white/90">Premium deneyim</div>
-                  <div className="mt-1 text-sm text-white/65">
-                    Favoriler, kişisel sayfa ve filtrelenmiş akış gibi modüller hesabınla birlikte açılır.
+                  <div className="text-sm font-semibold text-white/90">Yönlendirme</div>
+                  <div className="mt-1 text-sm text-white/65 break-words">
+                    Kayıt sonrası: <span className="font-semibold text-white/90">{nextUrl}</span>
                   </div>
                 </div>
               </div>
@@ -356,7 +346,6 @@ export default function Page() {
           <div className="lg:col-span-7">
             <div className="relative overflow-hidden rounded-[30px] border border-white/10 bg-white/5 p-5 shadow-[0_35px_120px_-90px_rgba(0,0,0,0.85)] backdrop-blur sm:rounded-[34px] sm:p-7">
               <div className="pointer-events-none absolute inset-0 opacity-70 [background-image:radial-gradient(circle_at_15%_15%,rgba(99,102,241,0.26),transparent_50%),radial-gradient(circle_at_85%_35%,rgba(16,185,129,0.20),transparent_55%),radial-gradient(circle_at_50%_120%,rgba(249,115,22,0.16),transparent_55%)]" />
-              <div className="pointer-events-none absolute inset-0 opacity-[0.20] [background-image:linear-gradient(to_right,rgba(255,255,255,0.08)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.08) 1px,transparent_1px)] [background-size:28px_28px]" />
 
               <div className="relative">
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
@@ -402,13 +391,8 @@ export default function Page() {
                     </Field>
                   </div>
 
-                  {/* ✅ NEW: phone + city */}
                   <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                    <Field
-                      label="Telefon"
-                      icon={<Phone className="h-3.5 w-3.5 text-white/75" />}
-                      hint="Örn: +905551112233"
-                    >
+                    <Field label="Telefon" icon={<Phone className="h-3.5 w-3.5 text-white/75" />} hint="Örn: +905551112233">
                       <input
                         value={phone}
                         onChange={(e) => setPhone(e.target.value)}
@@ -445,11 +429,7 @@ export default function Page() {
                   </Field>
 
                   <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                    <Field
-                      label="Şifre"
-                      icon={<Lock className="h-3.5 w-3.5 text-white/75" />}
-                      hint="En az 6 karakter."
-                    >
+                    <Field label="Şifre" icon={<Lock className="h-3.5 w-3.5 text-white/75" />} hint="En az 6 karakter.">
                       <div className="flex items-center overflow-hidden rounded-2xl border border-white/10 bg-white/5">
                         <input
                           value={pass}
@@ -502,9 +482,7 @@ export default function Page() {
                         KVKK
                       </Link>{" "}
                       metinlerini okudum, kabul ediyorum.
-                      <span className="block text-xs text-white/55">
-                        Kayıt sonrası e-posta doğrulaması istenebilir.
-                      </span>
+                      <span className="block text-xs text-white/55">Kayıt sonrası e-posta doğrulaması istenebilir.</span>
                     </span>
                   </label>
 
@@ -527,8 +505,7 @@ export default function Page() {
                   <div className="mt-3 flex items-start gap-2 rounded-2xl border border-white/10 bg-white/5 p-4 text-xs text-white/70">
                     <ShieldCheck className="mt-0.5 h-4 w-4 text-emerald-300" />
                     <div className="leading-relaxed">
-                      Bilgilerin güvenli şekilde işlenir. Spam/istismar için kayıtlar gerektiğinde
-                      kısıtlanabilir.
+                      Bilgilerin güvenli şekilde işlenir. Spam/istismar için kayıtlar gerektiğinde kısıtlanabilir.
                     </div>
                   </div>
                 </form>
@@ -543,5 +520,23 @@ export default function Page() {
 
       <Footer />
     </div>
+  )
+}
+
+function KayitFallback() {
+  return (
+    <div className="min-h-screen bg-[#0B1020] text-white">
+      <div className="mx-auto w-full max-w-screen-2xl px-4 py-10 sm:px-6 lg:px-10 2xl:px-14">
+        <div className="rounded-[24px] border border-white/10 bg-white/5 p-6 text-sm text-white/70">Yükleniyor…</div>
+      </div>
+    </div>
+  )
+}
+
+export default function Page() {
+  return (
+    <Suspense fallback={<KayitFallback />}>
+      <KayitInner />
+    </Suspense>
   )
 }
