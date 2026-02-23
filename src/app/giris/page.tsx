@@ -3,13 +3,12 @@
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import React, { useEffect, useMemo, useRef, useState } from "react"
+import React, { Suspense, useEffect, useMemo, useRef, useState } from "react"
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
 import clsx from "clsx"
 import { Mail, Lock, Eye, EyeOff, ArrowRight, ShieldCheck, AlertTriangle, Info } from "lucide-react"
 import Footer from "@/components/Footer"
-
 import PublicTopbar from "@/components/PublicTopbar"
 
 const LS_EMAIL_KEY = "auth_email_remembered_v1"
@@ -107,7 +106,12 @@ function pickErrorMessage(anyErr: any): string {
   return "Bir hata oluştu."
 }
 
-export default function Page() {
+/**
+ * ✅ IMPORTANT:
+ * useSearchParams() -> Suspense içinde olmalı (Next.js CSR bailout kuralı)
+ * Bu yüzden hook'u iç component'e taşıdık.
+ */
+function GirisInner() {
   const router = useRouter()
   const sp = useSearchParams()
   const nextUrl = useMemo(() => sp.get("next") || "/", [sp])
@@ -350,7 +354,12 @@ export default function Page() {
                       <ArrowRight className="h-4 w-4" />
                     </PillButton>
 
-                    <PillButton variant="ghost" onClick={() => router.push("/sikayet-yaz")} className="w-full" disabled={loading}>
+                    <PillButton
+                      variant="ghost"
+                      onClick={() => router.push("/sikayet-yaz")}
+                      className="w-full"
+                      disabled={loading}
+                    >
                       Şikayet Yaz
                     </PillButton>
                   </div>
@@ -385,5 +394,26 @@ export default function Page() {
 
       <Footer />
     </div>
+  )
+}
+
+function GirisFallback() {
+  // Suspense fallback: minimal ama tasarımı bozmayalım
+  return (
+    <div className="min-h-screen bg-[#0B1020] text-white">
+      <div className="mx-auto w-full max-w-screen-2xl px-4 py-10 sm:px-6 lg:px-10 2xl:px-14">
+        <div className="rounded-[24px] border border-white/10 bg-white/5 p-6 text-sm text-white/70">
+          Yükleniyor…
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export default function Page() {
+  return (
+    <Suspense fallback={<GirisFallback />}>
+      <GirisInner />
+    </Suspense>
   )
 }
