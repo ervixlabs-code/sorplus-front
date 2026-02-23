@@ -6,13 +6,14 @@ import clsx from "clsx"
 import Link from "next/link"
 import { Facebook, Linkedin, Youtube, X } from "lucide-react"
 
+type FooterLinkItem = { label: string; href: string; muted?: boolean }
+
 type FooterColumn = {
   title: string
-  links: { label: string; href: string; muted?: boolean }[]
+  links: FooterLinkItem[]
 }
 
 type CategoryApiItem = {
-  differentiates?: never
   id: string | number
   name: string
   slug?: string
@@ -77,6 +78,14 @@ function FooterLink({
   )
 }
 
+/** ✅ Querystring builder (SSR/TS-safe) */
+function buildQuery(params: Record<string, string>) {
+  const pairs = Object.entries(params)
+    .filter(([, v]) => (v ?? "").trim().length > 0)
+    .map(([k, v]) => `${encodeURIComponent(k)}=${encodeURIComponent(v)}`)
+  return pairs.length ? `?${pairs.join("&")}` : ""
+}
+
 export default function Footer() {
   const [categories, setCategories] = useState<CategoryApiItem[]>([])
   const [complaints, setComplaints] = useState<ComplaintApiItem[]>([])
@@ -87,6 +96,7 @@ export default function Footer() {
     let alive = true
 
     async function load() {
+      // -------- categories --------
       try {
         setCatErr(null)
         const res = await fetch(`${API_BASE}/api/categories`, {
@@ -96,12 +106,14 @@ export default function Footer() {
         })
         if (!res.ok) {
           const body = await safeJson(res)
-          throw new Error(body?.message || body || `categories ${res.status}`)
+          throw new Error((body as any)?.message || body || `categories ${res.status}`)
         }
         const data = await safeJson(res)
 
         const list: CategoryApiItem[] =
-          Array.isArray(data) ? data : (data?.items || data?.data || data?.categories || [])
+          Array.isArray(data)
+            ? data
+            : (data?.items || data?.data || data?.categories || [])
 
         if (alive) setCategories(list || [])
       } catch (e: any) {
@@ -109,6 +121,7 @@ export default function Footer() {
         if (alive) setCatErr(e?.message || "Kategoriler yüklenemedi")
       }
 
+      // -------- complaints --------
       try {
         setCmpErr(null)
         const res = await fetch(`${API_BASE}/api/complaints/public`, {
@@ -118,12 +131,14 @@ export default function Footer() {
         })
         if (!res.ok) {
           const body = await safeJson(res)
-          throw new Error(body?.message || body || `complaints ${res.status}`)
+          throw new Error((body as any)?.message || body || `complaints ${res.status}`)
         }
         const data = await safeJson(res)
 
         const list: ComplaintApiItem[] =
-          Array.isArray(data) ? data : (data?.items || data?.data || data?.complaints || [])
+          Array.isArray(data)
+            ? data
+            : (data?.items || data?.data || data?.complaints || [])
 
         if (alive) setComplaints(list || [])
       } catch (e: any) {
@@ -139,11 +154,11 @@ export default function Footer() {
   }, [])
 
   const cols: FooterColumn[] = useMemo(() => {
-    const complaintLinks =
-      complaints?.slice(0, 5).map((c) => ({
+    const complaintLinks: FooterLinkItem[] =
+      (complaints?.slice(0, 5) || []).map((c) => ({
         label: c?.title || "Şikayet",
         href: `/sikayetler/${c.id}`,
-      })) || []
+      }))
 
     if (complaintLinks.length === 0) {
       complaintLinks.push({ label: "Şikayetler", href: "/sikayetler" })
@@ -151,23 +166,23 @@ export default function Footer() {
 
     complaintLinks.push({ label: "Tüm Şikayetler", href: "/sikayetler", muted: true })
 
-    const categoryLinks =
-  categories?.slice(0, 9).map((cat) => {
-    const name = cat?.name || "Kategori"
-    const slug = (cat?.slug || "").trim()
-    const id = String(cat?.id ?? "")
+    const categoryLinks: FooterLinkItem[] =
+      (categories?.slice(0, 9) || []).map((cat) => {
+        const name = cat?.name || "Kategori"
+        const slug = (cat?.slug || "").trim()
+        const id = String(cat?.id ?? "")
 
-    // ✅ en sağlam: hem slug hem id gönder
-    const qs = new URLSearchParams()
-    if (slug) qs.set("kategori", slug)        // eski param adın kalsın
-    if (id) qs.set("kategoriId", id)          // garanti fallback
+        // ✅ en sağlam: hem slug hem id gönder
+        const qs = buildQuery({
+          kategori: slug, // eski param adın kalsın
+          kategoriId: id, // garanti fallback
+        })
 
-    return {
-      label: name,
-      href: `/sikayetler?${qs.toString()}`,
-    }
-  }) || []
-
+        return {
+          label: name,
+          href: `/sikayetler${qs}`,
+        }
+      }) || []
 
     if (categoryLinks.length === 0) {
       categoryLinks.push({ label: "Kategoriler", href: "/sikayetler" })
@@ -279,7 +294,7 @@ export default function Footer() {
 
               <div className="mt-4 space-y-2.5">
                 {col.links.map((l, i) => (
-                  <FooterLink key={i} href={l.href} muted={!!l.muted}>
+                  <FooterLink key={`${l.href}-${i}`} href={l.href} muted={!!l.muted}>
                     {l.label}
                   </FooterLink>
                 ))}
