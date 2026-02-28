@@ -132,7 +132,7 @@ export default function Footer() {
         if (alive) setComplaints(list || [])
       } catch (e: any) {
         console.error("footer complaints error:", e)
-        if (alive) setCmpErr(e?.message || "Şikayetler yüklenemedi")
+        if (alive) setCmpErr(e?.message || "Şikayetler yüklenemedii")
       }
     }
 
