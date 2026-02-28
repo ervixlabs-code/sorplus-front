@@ -26,26 +26,15 @@ type ComplaintApiItem = {
 }
 
 /** ===================== API BASE ===================== */
-const ENV_BASE =
-  (process.env as any)?.NEXT_PUBLIC_API_BASE ||
-  (process.env as any)?.NEXT_PUBLIC_BACKEND_BASE ||
-  ""
+const RAW_BASE = (process.env.NEXT_PUBLIC_API_BASE || "").trim()
 
 function normalizeApiBase(raw?: string) {
-  const base = (raw || "").trim()
-  if (!base) return ""
-  const noTrail = base.replace(/\/+$/, "")
-  return noTrail.endsWith("/api") ? noTrail.slice(0, -4) : noTrail
+  const base = (raw || "").replace(/\/+$/, "")
+  // sondaki /api varsa kırp
+  return base.endsWith("/api") ? base.slice(0, -4) : base
 }
 
-const API_BASE_RAW = normalizeApiBase(ENV_BASE)
-
-// ✅ DEV fallback: env yoksa backend portuna git (genelde 3002)
-const API_BASE =
-  API_BASE_RAW ||
-  (typeof window !== "undefined"
-    ? `http://${window.location.hostname}:3002`
-    : "http://localhost:3002")
+const API_BASE = normalizeApiBase(RAW_BASE)
 
 async function safeJson(res: Response) {
   const text = await res.text()

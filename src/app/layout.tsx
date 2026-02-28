@@ -3,7 +3,7 @@ import type { Metadata } from "next"
 import Topbar from "@/components/Topbar"
 
 export const metadata: Metadata = {
-  title: "Deneyim",
+  title: "Sorplus",
   description: "Kategori bazlı şikayet platformu",
 }
 
