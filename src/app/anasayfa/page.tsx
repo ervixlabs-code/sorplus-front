@@ -88,7 +88,7 @@ const HERO_SLIDES = [
     titleA: "Deneyimini paylaş,",
     titleB: "başkaları yalnız kalmasın",
     desc: "Problemleri kategori bazlı görünür kıl. Firma hedefleme yok — amaç linç değil, farkındalık.",
-    ctaPrimary: "Şikayet Yaz",
+    ctaPrimary: "Sorununu Yaz",
     ctaSecondary: "Gündemi Gör",
     theme: "mint" as const,
   },
@@ -106,7 +106,7 @@ const HERO_SLIDES = [
     titleA: "Daha temiz bir alan:",
     titleB: "hakaret yok",
     desc: "Küfür/hakaret filtreleri ve moderasyon kuyruğu ile içerikler yayın öncesi kontrol edilir.",
-    ctaPrimary: "Şikayet Yaz",
+    ctaPrimary: "SOrununu Yaz",
     ctaSecondary: "Nasıl Çalışır?",
     theme: "slate" as const,
   },
@@ -177,7 +177,7 @@ function HeroArt({ theme, onOpen }: { theme: "mint" | "indigo" | "slate"; onOpen
 
       <div className="pointer-events-none absolute inset-x-0 bottom-0 h-14 bg-gradient-to-t from-white/75 to-transparent" />
       <div className="absolute bottom-4 right-5 rounded-full border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-900 shadow-sm">
-        Tıkla • Şikayetleri gör
+        Tıkla • Diğer Sorunlarıda gör
       </div>
     </button>
   )
@@ -398,7 +398,7 @@ export default function Page() {
         id: "c2",
         userName: "Mehmet",
         avatarLetter: "M",
-        title: "Şebeke kesiliyor, bağlantı problemi ve uyumsuzluk şikayeti",
+        title: "Şebeke kesiliyor, bağlantı problemi ve uyumsuzluk sorunu",
         brandHint: "Bir operatör (metinde geçti)",
         comments: 11,
         views: 271,
@@ -585,7 +585,7 @@ export default function Page() {
       </div>
 
       <PublicTopbar
-        subtitle="Şikayetler"
+        subtitle="Sorunlar"
         showSearchStub={false}
         nextUrlForAuth="/sikayetler"
       />
@@ -732,7 +732,7 @@ export default function Page() {
           <div className="mx-auto w-full max-w-screen-2xl px-4 sm:px-6 lg:px-10 2xl:px-14">
             <div className="flex items-end justify-between gap-3">
               <div>
-                <h2 className="text-[30px] font-semibold tracking-tight text-white">Gündemdeki Şikayetler</h2>
+                <h2 className="text-[30px] font-semibold tracking-tight text-white">Gündemdeki Yaşanan Sorunlar</h2>
                 <p className="mt-1 text-sm text-white/65">
                   Toplulukta en çok konuşulan başlıklar — premium curved görünümle.
                 </p>
@@ -748,7 +748,7 @@ export default function Page() {
                   onClick={goList}
                   className="rounded-full border border-white/10 bg-white/10 px-4 py-2 text-xs font-semibold text-white/85 backdrop-blur hover:bg-white/15"
                 >
-                  Tüm şikayetler
+                  Tüm Yaşanan Sorunlar
                 </button>
               </div>
             </div>
@@ -793,7 +793,7 @@ export default function Page() {
                     onClick={goList}
                     className="w-full rounded-full bg-white px-5 py-3 text-sm font-semibold text-black shadow-sm hover:bg-white/90"
                   >
-                    Şikayetleri gör
+                    Yaşanan Sorunları gör
                   </button>
                 </div>
               </div>
@@ -819,7 +819,7 @@ export default function Page() {
               </div>
               <h3 className="mt-4 text-[38px] font-semibold tracking-tight">Güvenin ölçülebilir hali</h3>
               <p className="mt-2 max-w-2xl text-sm leading-relaxed text-white/75">
-                Topluluğun nabzını metriklerle takip et. Detaylar şikayet listesinde.
+                Topluluğun nabzını metriklerle takip et. Detaylar SOrunlar listesinde.
               </p>
             </div>
 
@@ -828,7 +828,7 @@ export default function Page() {
                 Yukarı Çık
               </PillButton>
               <PillButton variant="secondary" onClick={goWrite}>
-                Şikayet Yaz
+                Sorun Yaz
               </PillButton>
             </div>
           </div>
@@ -852,7 +852,7 @@ export default function Page() {
             <StatTile
               onOpen={goList}
               icon={<BadgeCheck className="h-5 w-5" />}
-              label="Çözülen Şikayet"
+              label="Çözülen Sorunlar"
               value={formatTR(4190157)}
               accent="indigo"
             />
@@ -879,7 +879,7 @@ export default function Page() {
                   </span>
                 </h4>
                 <p className="mt-2 max-w-2xl text-sm text-white/70">
-                  Detayları görmek için karta tıkla — doğrudan şikayet detayına gidersin.
+                  Detayları görmek için karta tıkla — doğrudan sorunlar detayına gidersin.
                 </p>
               </div>
 
@@ -932,7 +932,7 @@ export default function Page() {
             </div>
 
             <div className="mt-10 flex flex-col items-start justify-between gap-4 border-t border-white/10 pt-6 md:flex-row md:items-center">
-              <div className="text-xs text-white/65">⌘K → Şikayet yaz • Oklar → Hero slider</div>
+              <div className="text-xs text-white/65">⌘K → Sorun yaz • Oklar → Hero slider</div>
               <div className="text-xs text-white/65">Güvenli paylaşım: kişisel veri ekleme, hakaret yok.</div>
             </div>
           </div>
@@ -1275,7 +1275,7 @@ function TalkedRail({
                   onClick={onWrite}
                   className="rounded-full bg-emerald-500 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-400"
                 >
-                  Şikayet Yaz
+                  Sorunlar Yaz
                 </button>
               </div>
             </div>
@@ -1438,7 +1438,7 @@ function StatTile({
         {suffix ? <span className="text-white/80">{suffix}</span> : null}
       </div>
 
-      <div className="relative mt-3 text-xs font-semibold text-white/70">Tıkla • şikayetleri gör</div>
+      <div className="relative mt-3 text-xs font-semibold text-white/70">Tıkla • Sorunları gör</div>
     </button>
   )
 }
