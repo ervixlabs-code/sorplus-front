@@ -226,7 +226,7 @@ export default function PublicTopbar({
 
             <div className="min-w-0 leading-tight">
               <div className="flex items-center gap-2">
-                <div className="truncate text-base font-extrabold tracking-tight text-white">Deneyim</div>
+                <div className="truncate text-base font-extrabold tracking-tight text-white">SorPlus</div>
                 <span className="hidden rounded-full border border-white/10 bg-white/10 px-2 py-0.5 text-[10px] font-semibold text-white/80 sm:inline-flex">
                   Beta
                 </span>
@@ -238,8 +238,8 @@ export default function PublicTopbar({
           {/* ✅ Desktop nav (daha belirgin) */}
           {showQuickLinks ? (
             <nav className="hidden items-center gap-2 md:flex">
-              <NavItem href="/sikayetler" label="Şikayetler" active={isComplaints} disabled={disabled} />
-              <NavItem href="/sikayet-yaz" label="Şikayet Yaz" active={isWrite} disabled={disabled} />
+              <NavItem href="/sikayetler" label="Sorunlar" active={isComplaints} disabled={disabled} />
+              <NavItem href="/sikayet-yaz" label="Sorun Yaz" active={isWrite} disabled={disabled} />
               <NavItem href="/rehber" label="Rehber" active={isGuide} disabled={disabled} />
               <NavItem href="/kurallar" label="Kurallar" active={isRules} disabled={disabled} />
             </nav>
@@ -254,7 +254,7 @@ export default function PublicTopbar({
                 <Search className="h-4 w-4" />
               </div>
               <input
-                placeholder="Şikayetlerde ara…"
+                placeholder="Sorunlarda ara…"
                 className="h-[46px] w-[320px] bg-transparent pr-4 text-sm font-medium text-white placeholder:text-white/55 focus:outline-none"
                 value=""
                 disabled
@@ -265,7 +265,7 @@ export default function PublicTopbar({
           {showWriteButton ? (
             <PillButton variant="secondary" href="/sikayet-yaz" disabled={disabled}>
               <Plus className="h-4 w-4" />
-              Şikayet Yaz
+              Sorun Yaz
             </PillButton>
           ) : null}
 
@@ -293,8 +293,8 @@ export default function PublicTopbar({
         <div className="no-scrollbar flex items-center gap-2 overflow-x-auto md:hidden">
           {showQuickLinks ? (
             <>
-              <NavChip href="/sikayetler" active={isComplaints} disabled={disabled}>Şikayetler</NavChip>
-              <NavChip href="/sikayet-yaz" active={isWrite} disabled={disabled}>Şikayet Yaz</NavChip>
+              <NavChip href="/sikayetler" active={isComplaints} disabled={disabled}>Sorunlar</NavChip>
+              <NavChip href="/sikayet-yaz" active={isWrite} disabled={disabled}>Sorun Yaz</NavChip>
               <NavChip href="/rehber" active={isGuide} disabled={disabled}>Rehber</NavChip>
               <NavChip href="/kurallar" active={isRules} disabled={disabled}>Kurallar</NavChip>
             </>
