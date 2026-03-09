@@ -14,6 +14,7 @@ import {
   Database,
   Lock,
   Mail,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   HelpCircle,
   BadgeCheck,
 } from "lucide-react"
@@ -56,6 +57,7 @@ type KvkkPublic = {
   id: string
   title: string
   slug: string | null
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   content: any // { sections: [...] } bekliyoruz
   isActive: boolean
   createdAt?: string
@@ -96,6 +98,7 @@ function PillLink({
   )
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function PillButton({
   children,
   onClick,
@@ -244,6 +247,7 @@ function iconFromKey(key: string | undefined) {
   return <Info className="h-4 w-4" />
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function normalizeCategory(v: any): SectionCategory {
   const s = String(v || "").trim()
 
@@ -264,6 +268,7 @@ function normalizeCategory(v: any): SectionCategory {
   return "Aydınlatma"
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function normalizeLevel(v: any): Section["level"] {
   const s = String(v || "").toLowerCase()
   if (s.includes("zorun")) return "Zorunlu"
@@ -271,11 +276,13 @@ function normalizeLevel(v: any): Section["level"] {
   return "Bilgi"
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function toSectionsFromKvkkContent(content: any): Section[] {
   const raw = content?.sections
   if (!Array.isArray(raw)) return []
 
   return raw
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     .map((r: any, idx: number) => {
       const id = String(r?.id || r?.slug || `kvkk-${idx}`)
       const category = normalizeCategory(r?.category)
@@ -286,6 +293,7 @@ function toSectionsFromKvkkContent(content: any): Section[] {
 
       const bulletsRaw = r?.bullets
       const bullets = Array.isArray(bulletsRaw)
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         ? bulletsRaw.map((x: any) => String(x)).filter(Boolean)
         : undefined
 
@@ -305,6 +313,7 @@ function toSectionsFromKvkkContent(content: any): Section[] {
 }
 
 export default function Page() {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const router = useRouter()
   const [category, setCategory] = useState<SectionCategory | "Tümü">("Tümü")
   const [q, setQ] = useState("")
@@ -435,6 +444,7 @@ export default function Page() {
       if (!alive) return
       setKvkkTitle(nextTitle)
       setItemsFromApi(sections.length ? sections : [])
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
       if (!alive) return
       setItemsFromApi(null) // null => demo fallback
@@ -507,7 +517,7 @@ export default function Page() {
         </div>
       </div>
 
-      <PublicTopbar subtitle="Şikayetler" showSearchStub={false} nextUrlForAuth="/sikayetler" />
+      <PublicTopbar subtitle="Sorunlar" showSearchStub={false} nextUrlForAuth="/sikayetler" />
 
       <main className="mx-auto w-full max-w-screen-2xl px-6 pb-16 lg:px-10 2xl:px-14">
         <section className="pt-8">

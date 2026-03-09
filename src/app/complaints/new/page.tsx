@@ -7,9 +7,9 @@ export default function NewComplaintPage() {
     <main className="py-8">
       <Container>
         <div className="max-w-2xl">
-          <h1 className="text-2xl font-semibold text-brand.primary">Şikayet Yaz</h1>
+          <h1 className="text-2xl font-semibold text-brand.primary">Sorun Yaz</h1>
           <p className="mt-1 text-sm text-slate-600">
-            Video yok. Firma sayfası yok. Sadece kategori bazlı şikayet.
+            Video yok. Firma sayfası yok. Sadece kategori bazlı sorunlar.
           </p>
 
           <form className="mt-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-soft space-y-4">
@@ -36,7 +36,7 @@ export default function NewComplaintPage() {
               <label className="text-sm font-medium text-slate-700">Detay</label>
               <textarea
                 className="mt-2 min-h-[140px] w-full rounded-xl border border-slate-200 bg-white px-3 py-3 text-sm outline-none focus:ring-2 focus:ring-brand.accent/30"
-                placeholder="Şikayetini detaylı anlat… (Firma adı geçerse otomatik maskelenecek)"
+                placeholder="Sorununun detaylı anlat… (Firma adı geçerse otomatik maskelenecek)"
               />
             </div>
 

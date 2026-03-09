@@ -23,7 +23,7 @@ export default async function ComplaintDetailPage({ params }: { params: Promise<
       <main className="py-10">
         <Container>
           <div className="rounded-2xl border border-slate-200 bg-white p-6">
-            Şikayet bulunamadı.
+            Sorun bulunamadı.
           </div>
         </Container>
       </main>

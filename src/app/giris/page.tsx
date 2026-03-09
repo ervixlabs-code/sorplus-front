@@ -254,7 +254,7 @@ function GirisInner() {
               <div className="text-sm font-semibold text-white/90">İpucu</div>
               <div className="mt-2 text-sm text-white/70 leading-relaxed">
                 Hızlı erişim için <span className="font-semibold text-white/90">⌘K</span> /{" "}
-                <span className="font-semibold text-white/90">Ctrl+K</span> ile şikayet yazma ekranını açabilirsin.
+                <span className="font-semibold text-white/90">Ctrl+K</span> ile sorun yazma ekranını açabilirsin.
               </div>
 
               <div className="mt-4 text-sm text-white/70 break-words">
@@ -360,7 +360,7 @@ function GirisInner() {
                       className="w-full"
                       disabled={loading}
                     >
-                      Şikayet Yaz
+                      Sorun Yaz
                     </PillButton>
                   </div>
 

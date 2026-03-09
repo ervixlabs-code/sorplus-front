@@ -330,7 +330,7 @@ export default function Page() {
     []
   )
 
-  const stepTitle = step === 1 ? "Şikayet Detayı" : step === 2 ? "Marka (Opsiyonel)" : "Belge / Onay"
+  const stepTitle = step === 1 ? "Sorun Detayı" : step === 2 ? "Marka (Opsiyonel)" : "Belge / Onay"
 
   useEffect(() => {
     ;(async () => {
@@ -452,12 +452,12 @@ export default function Page() {
           payload?.message?.[0] ||
           payload?.message ||
           payload?.error ||
-          `Şikayet gönderilemedi (HTTP ${res.status}).`
+          `Sorun gönderilemedi (HTTP ${res.status}).`
         setNotice({ kind: "error", text: String(msg) })
         return
       }
 
-      setNotice({ kind: "success", text: "Şikayet gönderildi ✅ Moderasyon sonrası yayınlanacak." })
+      setNotice({ kind: "success", text: "Sorun gönderildi ✅ Moderasyon sonrası yayınlanacak." })
 
       setDraft({
         categoryId: null,
@@ -523,7 +523,7 @@ export default function Page() {
       </div>
 
       <PublicTopbar
-          subtitle="Şikayetler"
+          subtitle="Sorunlar"
           showSearchStub={false} // istersen true (detay sayfasında input stub)
           nextUrlForAuth="/sikayetler" // ya da mevcut sayfa path’in
         />
@@ -536,7 +536,7 @@ export default function Page() {
             <GlassCard className="p-5 sm:p-6">
               <div className="flex items-start justify-between gap-3">
                 <div>
-                  <div className="text-sm font-semibold text-white/90">Şikayet Oluştur</div>
+                  <div className="text-sm font-semibold text-white/90">Sorun Oluştur</div>
                   <div className="mt-1 text-xs text-white/60">
                     {step}/3 • {stepTitle}
                   </div>
@@ -550,7 +550,7 @@ export default function Page() {
               </div>
 
               <div className="mt-6 space-y-3">
-                <StepperRow n={1} title="Şikayet Detayı" active={step === 1} done={step > 1} onClick={() => setStep(1)} />
+                <StepperRow n={1} title="Sorun Detayı" active={step === 1} done={step > 1} onClick={() => setStep(1)} />
                 <StepperRow n={2} title="Marka" subtitle="opsiyonel" active={step === 2} done={step > 2} onClick={() => setStep(2)} />
                 <StepperRow n={3} title="Belge / Onay" active={step === 3} done={false} onClick={() => setStep(3)} />
               </div>
@@ -616,7 +616,7 @@ export default function Page() {
                   ) : (
                     <PillButton variant="secondary" onClick={onSubmit} disabled={!canNext || loadingSubmit} className="shrink-0">
                       <Check className="h-4 w-4" />
-                      {loadingSubmit ? "Gönderiliyor…" : "Şikayeti Gönder"}
+                      {loadingSubmit ? "Gönderiliyor…" : "Sorununu Gönder"}
                     </PillButton>
                   )}
                 </div>

@@ -17,7 +17,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
               {cat?.name ?? "Kategori"}
             </h1>
             <p className="mt-1 text-sm text-slate-600">
-              Bu kategorideki şikayetleri görüntülüyorsun.
+              Bu kategorideki Sorunları görüntülüyorsun.
             </p>
           </div>
           <div className="text-xs text-slate-500">Filtreler (MVP’de sonra)</div>
@@ -28,7 +28,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
             filtered.map((item) => <ComplaintCard key={item.id} item={item} />)
           ) : (
             <div className="rounded-2xl border border-slate-200 bg-white p-6 text-slate-600">
-              Henüz bu kategoride şikayet yok.
+              Henüz bu kategoride Sorun yok.
             </div>
           )}
         </div>

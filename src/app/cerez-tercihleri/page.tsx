@@ -529,7 +529,7 @@ export default function Page() {
       </div>
 
 <PublicTopbar
-  subtitle="Şikayetler"
+  subtitle="Sorunlar"
   showSearchStub={false} // istersen true (detay sayfasında input stub)
   nextUrlForAuth="/sikayetler" // ya da mevcut sayfa path’in
 />

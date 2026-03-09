@@ -613,7 +613,7 @@ export default function Page() {
         </div>
       </div>
 
-      <PublicTopbar subtitle="Şikayetler" showSearchStub={false} nextUrlForAuth="/sikayetler" />
+      <PublicTopbar subtitle="Sorrunlar" showSearchStub={false} nextUrlForAuth="/sikayetler" />
 
       <main className="mx-auto w-full max-w-screen-2xl px-6 pb-16 lg:px-10 2xl:px-14">
         {/* HEADER */}
@@ -682,11 +682,11 @@ export default function Page() {
 
             <div className="flex items-center gap-2">
               <PillLink href="/sikayet-yaz" variant="secondary">
-                Şikayet Yaz
+                Sorun Yaz
                 <ArrowRight className="h-4 w-4" />
               </PillLink>
               <PillLink href="/sikayetler" variant="ghost">
-                Şikayetleri Gör
+                Sorunları Gör
               </PillLink>
             </div>
           </div>
@@ -757,11 +757,11 @@ export default function Page() {
 
                 <div className="mt-5 flex flex-col gap-2">
                   <PillLink href="/sikayet-yaz" variant="secondary">
-                    Şikayet Yaz
+                    Sorun Yaz
                     <ArrowRight className="h-4 w-4" />
                   </PillLink>
                   <PillLink href="/sikayetler" variant="ghost">
-                    Şikayetleri Gör
+                    Sorunları Gör
                   </PillLink>
                 </div>
               </div>
@@ -858,10 +858,10 @@ export default function Page() {
           </div>
           <div className="flex items-center gap-2">
             <PillLink href="/sikayetler" variant="ghost">
-              Şikayetlere dön
+              Sorunlara dön
             </PillLink>
             <PillLink href="/sikayet-yaz" variant="secondary">
-              Şikayet Yaz
+              Sorun Yaz
             </PillLink>
           </div>
         </div>

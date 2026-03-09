@@ -68,6 +68,7 @@ type TermsOfUseRow = {
   id: string
   title: string
   slug: string | null
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   content: any
   isActive: boolean
   createdAt?: string
@@ -109,6 +110,7 @@ function pickIcon(category: SectionCategory) {
   }
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function safeCategory(v: any): SectionCategory {
   const s = String(v || "").trim()
   if (CATEGORIES.includes(s as SectionCategory)) return s as SectionCategory
@@ -116,6 +118,7 @@ function safeCategory(v: any): SectionCategory {
   return "Genel"
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function safeLevel(v: any): SectionLevel {
   const s = String(v || "").trim()
   if (s === "Zorunlu" || s === "Bilgi" || s === "Not") return s
@@ -336,6 +339,7 @@ export default function Page() {
 
       const data = (await res.json()) as TermsOfUseRow
       setDoc(data)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
       setErr(e?.message || "Bir hata oluştu")
       setDoc(null)
@@ -355,6 +359,7 @@ export default function Page() {
     const content = doc.content
 
     // Beklenen: { sections: [...] }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const sectionsRaw: any[] = Array.isArray(content?.sections) ? content.sections : []
 
     // Eğer backend’te content string gibi kaydedildiyse (beklenmiyor ama güvenlik)
@@ -380,6 +385,7 @@ export default function Page() {
 
         if (!title && !desc) return null
 
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const bullets = Array.isArray(s?.bullets) ? s.bullets.map((x: any) => String(x)).filter(Boolean) : undefined
 
         return {
@@ -449,7 +455,7 @@ export default function Page() {
         </div>
       </div>
 
-      <PublicTopbar subtitle="Şikayetler" showSearchStub={false} nextUrlForAuth="/sikayetler" />
+      <PublicTopbar subtitle="Sorunlar" showSearchStub={false} nextUrlForAuth="/sikayetler" />
 
       <main className="mx-auto w-full max-w-screen-2xl px-6 pb-16 lg:px-10 2xl:px-14">
         <section className="pt-8">
@@ -501,8 +507,8 @@ export default function Page() {
                 Gizlilik
               </PillLink>
 
-              <PillLink href="/sikayet-yaz" variant="secondary">
-                Şikayet Yaz
+              <PillLink href="/sorun-yaz" variant="secondary">
+                Sorun Yaz
               </PillLink>
 
               <PillButton variant="ghost" onClick={load}>
@@ -600,7 +606,7 @@ export default function Page() {
                     Gizlilik Politikası
                   </PillLink>
                   <PillLink href="/sikayet-yaz" variant="secondary">
-                    Şikayet Yaz <ArrowRight className="h-4 w-4" />
+                    Sorun Yaz <ArrowRight className="h-4 w-4" />
                   </PillLink>
                 </div>
               </div>

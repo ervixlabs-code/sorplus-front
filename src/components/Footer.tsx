@@ -95,6 +95,7 @@ export default function Footer() {
         })
         if (!res.ok) {
           const body = await safeJson(res)
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           throw new Error((body as any)?.message || body || `categories ${res.status}`)
         }
         const data = await safeJson(res)
@@ -105,6 +106,7 @@ export default function Footer() {
             : (data?.items || data?.data || data?.categories || [])
 
         if (alive) setCategories(list || [])
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (e: any) {
         console.error("footer categories error:", e)
         if (alive) setCatErr(e?.message || "Kategoriler yüklenemedi")
@@ -120,6 +122,7 @@ export default function Footer() {
         })
         if (!res.ok) {
           const body = await safeJson(res)
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           throw new Error((body as any)?.message || body || `complaints ${res.status}`)
         }
         const data = await safeJson(res)
@@ -130,6 +133,7 @@ export default function Footer() {
             : (data?.items || data?.data || data?.complaints || [])
 
         if (alive) setComplaints(list || [])
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (e: any) {
         console.error("footer complaints error:", e)
         if (alive) setCmpErr(e?.message || "Şikayetler yüklenemedii")
@@ -145,15 +149,15 @@ export default function Footer() {
   const cols: FooterColumn[] = useMemo(() => {
     const complaintLinks: FooterLinkItem[] =
       (complaints?.slice(0, 5) || []).map((c) => ({
-        label: c?.title || "Şikayet",
+        label: c?.title || "Sorun",
         href: `/sikayetler/${c.id}`,
       }))
 
     if (complaintLinks.length === 0) {
-      complaintLinks.push({ label: "Şikayetler", href: "/sikayetler" })
+      complaintLinks.push({ label: "Sorunlar", href: "/sikayetler" })
     }
 
-    complaintLinks.push({ label: "Tüm Şikayetler", href: "/sikayetler", muted: true })
+    complaintLinks.push({ label: "Tüm Sorunlar", href: "/sikayetler", muted: true })
 
     const categoryLinks: FooterLinkItem[] =
       (categories?.slice(0, 9) || []).map((cat) => {
@@ -179,7 +183,7 @@ export default function Footer() {
 
     return [
       {
-        title: "Şikayetler",
+        title: "Sorunlar",
         links: complaintLinks,
       },
       {
@@ -277,8 +281,8 @@ export default function Footer() {
               {col.title === "Kategoriler" && catErr ? (
                 <div className="mt-2 text-[12px] text-white/40">Kategoriler yüklenemedi</div>
               ) : null}
-              {col.title === "Şikayetler" && cmpErr ? (
-                <div className="mt-2 text-[12px] text-white/40">Şikayetler yüklenemedi</div>
+              {col.title === "Sorunlar" && cmpErr ? (
+                <div className="mt-2 text-[12px] text-white/40">Sorunlar yüklenemedi</div>
               ) : null}
 
               <div className="mt-4 space-y-2.5">

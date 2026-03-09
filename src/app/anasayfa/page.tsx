@@ -1008,7 +1008,6 @@ function CurvedTrendingCarousel({
 
       <div className="relative mb-6 flex items-center justify-between px-2 md:px-4">
         <div>
-          <div className="text-xs uppercase tracking-[0.22em] text-white/45">Curved Showcase</div>
           <div className="mt-1 text-sm font-semibold text-white/90">Gündemde öne çıkan başlıklar</div>
         </div>
 

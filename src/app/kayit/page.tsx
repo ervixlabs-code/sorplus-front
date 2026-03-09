@@ -297,7 +297,7 @@ function KayitInner() {
               className="shrink-0 px-3 py-2 text-[13px]"
               disabled={loading}
             >
-              Şikayet Yaz
+              Sorun Yaz
             </PillButton>
           </div>
         </div>

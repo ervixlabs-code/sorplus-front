@@ -205,7 +205,7 @@ export default function Page() {
         a: "Telefon, adres, T.C., kart bilgisi gibi veriler paylaşılmamalı. Moderasyon otomatik olarak maskeleyebilir; yine de paylaşmadan önce kontrol et.",
       },
       {
-        q: "Şikayetim kaldırılır mı?",
+        q: "Sorunum kaldırılır mı?",
         a: "Hakaret, nefret söylemi, kişisel veri veya tamamen asılsız/kanıtsız ağır iddialar içeren içerikler kaldırılabilir.",
       },
       {
@@ -248,13 +248,13 @@ export default function Page() {
             <span className="ml-2 text-white/70">Daha kaliteli deneyim paylaşımları için</span>
           </div>
           <div className="hidden items-center gap-2 text-sm text-white/80 sm:flex">
-            ⌘K / Ctrl+K → <span className="font-semibold text-white">Şikayet Yaz</span>
+            ⌘K / Ctrl+K → <span className="font-semibold text-white">Sorun Yaz</span>
           </div>
         </div>
       </div>
 
       <PublicTopbar
-        subtitle="Şikayetler"
+        subtitle="Sorunlar"
         showSearchStub={false} // istersen true (detay sayfasında input stub)
         nextUrlForAuth="/sikayetler" // ya da mevcut sayfa path’in
       />
@@ -293,7 +293,7 @@ export default function Page() {
                 </div>
 
                 <h1 className="mt-4 text-[34px] font-semibold tracking-tight text-white md:text-[44px]">
-                  İyi bir şikayet nasıl yazılır?
+                  İyi bir sorun nasıl yazılır?
                 </h1>
 
                 <p className="mt-2 max-w-2xl text-sm leading-relaxed text-white/70">
@@ -304,10 +304,10 @@ export default function Page() {
                 <div className="mt-6 flex flex-wrap items-center gap-3">
                   <PillButton variant="secondary" onClick={goWrite}>
                     <Plus className="h-4 w-4" />
-                    Şikayet Yaz
+                    Sorun Yaz
                   </PillButton>
                   <PillButton variant="ghost" onClick={goList}>
-                    Şikayetleri Gör
+                    Sorunları Gör
                   </PillButton>
                 </div>
 
@@ -470,17 +470,17 @@ export default function Page() {
                   • Yönlendirme yaparken güvenli ol: kişisel veri isteme/verme yok.
                 </div>
                 <div className="rounded-[22px] border border-white/10 bg-black/20 p-4">
-                  • Şikayet çözülürse güncelle: “sonuç” bölümü değer katar.
+                  • Sorun çözülürse güncelle: “sonuç” bölümü değer katar.
                 </div>
               </div>
 
               <div className="mt-5 flex flex-col gap-2">
                 <PillButton variant="secondary" onClick={goWrite}>
                   <Plus className="h-4 w-4" />
-                  Şikayet Yaz
+                  Sorun Yaz
                 </PillButton>
                 <PillButton variant="ghost" onClick={goList}>
-                  Şikayetleri Gör
+                  Sorunları Gör
                 </PillButton>
               </div>
             </GlassCard>

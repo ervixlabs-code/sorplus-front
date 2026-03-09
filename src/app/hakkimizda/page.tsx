@@ -183,7 +183,7 @@ export default function Page() {
   const heroDesc =
     (content?.heroDesc as string) ||
     (content?.description as string) ||
-    "Deneyim; kategori bazlı şikayet/deneyim paylaşımlarını daha şeffaf, daha güvenli ve daha çözüm odaklı bir çerçevede bir araya getirmeyi hedefler. Firma hedefleme yok — amaç linç değil, farkındalık ve ortak akıl."
+    "Deneyim; kategori bazlı sorunların paylaşımlarını daha şeffaf, daha güvenli ve daha çözüm odaklı bir çerçevede bir araya getirmeyi hedefler. Firma hedefleme yok — amaç linç değil, farkındalık ve ortak akıl."
 
   // Right sidebar cards
   const rightCards: Array<{ title: string; desc: string; icon?: string }> = Array.isArray(content?.rightCards)
@@ -288,12 +288,12 @@ export default function Page() {
             Hakkımızda • <span className="ml-2 text-white/70">Deneyim platformu</span>
           </div>
           <div className="hidden items-center gap-2 text-sm text-white/80 sm:flex">
-            ⌘K / Ctrl+K → <span className="font-semibold text-white">Şikayet Yaz</span>
+            ⌘K / Ctrl+K → <span className="font-semibold text-white">Sorun Yaz</span>
           </div>
         </div>
       </div>
 
-      <PublicTopbar subtitle="Şikayetler" showSearchStub={false} nextUrlForAuth="/sikayetler" />
+      <PublicTopbar subtitle="Sorunlar" showSearchStub={false} nextUrlForAuth="/sikayetler" />
 
       <main className="mx-auto w-full max-w-screen-2xl px-6 pb-16 pt-8 lg:px-10 2xl:px-14">
         {/* BACK */}
@@ -365,11 +365,11 @@ export default function Page() {
                 <div className="mt-6 flex flex-wrap items-center gap-3">
                   <PillButton variant="secondary" onClick={goList}>
                     <TrendingUp className="h-4 w-4" />
-                    Şikayetlere Git
+                    Sorunlara Git
                   </PillButton>
                   <PillButton variant="ghost" onClick={goWrite}>
                     <MessageSquare className="h-4 w-4" />
-                    Şikayet Yaz
+                    Sorun Yaz
                   </PillButton>
                   <PillButton variant="white" onClick={() => router.push("/kurallar")}>
                     <BookOpen className="h-4 w-4" />
@@ -444,7 +444,7 @@ export default function Page() {
                   İletişim Sayfası
                 </PillButton>
                 <PillButton variant="ghost" onClick={goWrite}>
-                  Şikayet Yaz
+                  Sorun Yaz
                 </PillButton>
               </div>
             </div>
@@ -461,10 +461,10 @@ export default function Page() {
           </div>
           <div className="flex items-center gap-2">
             <PillButton variant="ghost" onClick={goList}>
-              Şikayetlere dön
+              Sorunlara dön
             </PillButton>
             <PillButton variant="secondary" onClick={goWrite}>
-              Şikayet Yaz
+              Sorun Yaz
             </PillButton>
           </div>
         </div>

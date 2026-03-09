@@ -243,7 +243,7 @@ export default function Page() {
       </div>
 
       <PublicTopbar
-        subtitle="Şikayetler"
+        subtitle="Sorunlar"
         showSearchStub={false} // istersen true (detay sayfasında input stub)
         nextUrlForAuth="/sikayetler" // ya da mevcut sayfa path’in
       />
@@ -310,7 +310,7 @@ export default function Page() {
                     <div>
                       <div className="font-semibold text-white/80">İpucu</div>
                       <div className="mt-1">
-                        Şikayet içeriğiyle ilgili bir konuysa önce <span className="text-white/80">Kurallar</span> ve{" "}
+                        Sorun içeriğiyle ilgili bir konuysa önce <span className="text-white/80">Kurallar</span> ve{" "}
                         <span className="text-white/80">Rehber</span>’e bakmak işleri hızlandırır.
                       </div>
                     </div>
@@ -396,7 +396,7 @@ export default function Page() {
                   >
                     <span className="inline-flex items-center gap-2">
                       <Plus className="h-4 w-4" />
-                      Şikayet Yaz
+                      Sorun Yaz
                     </span>
                     <ExternalLink className="h-4 w-4 text-white/60" />
                   </button>
@@ -408,7 +408,7 @@ export default function Page() {
                   >
                     <span className="inline-flex items-center gap-2">
                       <Sparkles className="h-4 w-4" />
-                      Şikayetleri Gör
+                      Sorunları Gör
                     </span>
                     <ExternalLink className="h-4 w-4 text-white/60" />
                   </button>
@@ -545,7 +545,7 @@ export default function Page() {
                   <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
                     <div className="text-sm font-semibold text-white/85">Moderasyon talebi nasıl iletilir?</div>
                     <div className="mt-2 text-sm text-white/65">
-                      Konu: <span className="text-white/80 font-semibold">Moderasyon</span> seç. Şikayet ID veya linki
+                      Konu: <span className="text-white/80 font-semibold">Moderasyon</span> seç. Sorun ID veya linki
                       ekle ve kısa gerekçe yaz.
                     </div>
                   </div>
@@ -586,8 +586,8 @@ export default function Page() {
               <div className="rounded-[30px] border border-white/10 bg-white/5 p-6 backdrop-blur">
                 <div className="text-sm font-semibold text-white/90">Notlar</div>
                 <ul className="mt-3 list-disc space-y-2 pl-5 text-sm text-white/65">
-                  <li>Bu sayfa, şikayet oluşturma sayfasının yerine geçmez.</li>
-                  <li>Şikayet oluşturmak için “Şikayet Yaz” akışını kullan.</li>
+                  <li>Bu sayfa, sorun oluşturma sayfasının yerine geçmez.</li>
+                  <li>Sorun oluşturmak için “Sorun Yaz” akışını kullan.</li>
                   <li>Aciliyette en hızlı yol: konu seçip net detay yazmak.</li>
                 </ul>
               </div>
@@ -606,7 +606,7 @@ export default function Page() {
             </PillButton>
             <PillButton variant="secondary" onClick={goWrite}>
               <Plus className="h-4 w-4" />
-              Şikayet Yaz
+              Sorun Yaz
             </PillButton>
           </div>
         </div>

@@ -38,6 +38,7 @@ type RulesPublic = {
   id: string
   title: string
   slug: string | null
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   content: any // { rules:[...] } veya { sections:[...] } bekliyoruz
   isActive: boolean
   createdAt?: string
@@ -66,6 +67,7 @@ function levelBadge(level: Rule["level"]) {
   return "border-emerald-400/25 bg-emerald-400/10 text-emerald-100"
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function iconFromKey(key: any) {
   const k = String(key || "").toLowerCase()
   if (k.includes("spark")) return <Sparkles className="h-4 w-4" />
@@ -82,6 +84,7 @@ function iconFromKey(key: any) {
   return <Info className="h-4 w-4" />
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function normalizeRuleCategory(v: any): RuleCategory {
   const s = String(v || "").trim().toLowerCase()
   if (s.includes("kişisel") || s.includes("gizlilik")) return "Kişisel Veri & Gizlilik"
@@ -93,6 +96,7 @@ function normalizeRuleCategory(v: any): RuleCategory {
   return "Genel"
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function normalizeRuleLevel(v: any): Rule["level"] {
   const s = String(v || "").trim().toLowerCase()
   if (s.includes("zorun")) return "Zorunlu"
@@ -109,6 +113,7 @@ type Rule = {
   icon: React.ReactNode
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function normalizeLevel(v: any): Rule["level"] {
   const s = String(v || "").toLowerCase()
   if (s.includes("zorun")) return "Zorunlu"
@@ -122,6 +127,7 @@ function normalizeLevel(v: any): Rule["level"] {
  *  - content.rules: [{ id?, category, title, desc/description, level, iconKey }]
  *  - content.sections: KVKK style (title/desc/category/level/iconKey)
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function toRulesFromContent(content: any): Rule[] {
   // content.rules | content.items | content.sections gibi farklı yapılara tolerans
   const raw =
@@ -134,6 +140,7 @@ function toRulesFromContent(content: any): Rule[] {
   if (!Array.isArray(raw)) return []
 
   return raw
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     .map((r: any, idx: number) => {
       const id = String(r?.id || r?.slug || `rule-${idx}`)
       const title = String(r?.title || "").trim()
@@ -462,6 +469,7 @@ export default function Page() {
         if (!alive) return
         setRulesTitle(nextTitle)
         setItemsFromApi(mapped.length ? mapped : [])
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (e: any) {
         if (!alive) return
         setItemsFromApi(null)
@@ -533,7 +541,7 @@ export default function Page() {
         </div>
       </div>
 
-      <PublicTopbar subtitle="Şikayetler" showSearchStub={false} nextUrlForAuth="/sikayetler" />
+      <PublicTopbar subtitle="Sorunlar" showSearchStub={false} nextUrlForAuth="/sikayetler" />
 
       <main className="mx-auto w-full max-w-screen-2xl px-6 pb-16 lg:px-10 2xl:px-14">
         {/* HEADER */}
@@ -601,10 +609,10 @@ export default function Page() {
 
             <div className="flex items-center gap-2">
               <PillLink href="/sikayetler" variant="ghost">
-                Şikayetlere Git
+                Sorunlara Git
               </PillLink>
               <PillLink href="/sikayet-yaz" variant="secondary">
-                Şikayet Yaz
+                Sorun Yaz
               </PillLink>
             </div>
           </div>
@@ -690,11 +698,11 @@ export default function Page() {
 
                 <div className="mt-5 flex flex-col gap-2">
                   <PillLink href="/sikayet-yaz" variant="secondary">
-                    Şikayet Yaz
+                    Sorun Yaz
                     <ArrowRight className="h-4 w-4" />
                   </PillLink>
                   <PillLink href="/sikayetler" variant="ghost">
-                    Şikayetleri Gör
+                    Sorunları Gör
                   </PillLink>
                 </div>
               </div>
@@ -773,10 +781,10 @@ export default function Page() {
           </div>
           <div className="flex items-center gap-2">
             <PillLink href="/sikayetler" variant="ghost">
-              Şikayetlere dön
+              Sorunlara dön
             </PillLink>
             <PillLink href="/sikayet-yaz" variant="secondary">
-              Şikayet Yaz
+              Sorun Yaz
             </PillLink>
           </div>
         </div>

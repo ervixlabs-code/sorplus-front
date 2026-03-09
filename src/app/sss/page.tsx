@@ -332,7 +332,7 @@ export default function Page() {
         </div>
       </div>
 
-      <PublicTopbar subtitle="Şikayetler" showSearchStub={false} nextUrlForAuth="/sikayetler" />
+      <PublicTopbar subtitle="Sorunlar" showSearchStub={false} nextUrlForAuth="/sikayetler" />
 
       <main className="mx-auto w-full max-w-screen-2xl px-6 pb-16 pt-8 lg:px-10 2xl:px-14">
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
@@ -380,13 +380,13 @@ export default function Page() {
                     <input
                       value={q}
                       onChange={(e) => setQ(e.target.value)}
-                      placeholder="Sorularda ara… (örn: kvkk, şikayet, moderasyon)"
+                      placeholder="Sorularda ara… (örn: kvkk, sorun, moderasyon)"
                       className="h-[50px] w-full bg-transparent pr-4 text-sm text-white placeholder:text-white/45 focus:outline-none"
                     />
                   </div>
 
                   <PillButton variant="secondary" onClick={goList}>
-                    Tüm şikayetler
+                    Tüm Sorunlar
                   </PillButton>
                 </div>
 

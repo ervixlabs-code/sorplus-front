@@ -357,7 +357,7 @@ export default function Page() {
         if (!res.ok) {
           const msg =
             (data && (data.message || data.error || (Array.isArray(data.errors) ? data.errors.join(", ") : null))) ||
-            `Şikayet alınamadı (HTTP ${res.status})`
+            `Sorun alınamadı (HTTP ${res.status})`
           throw new Error(String(msg))
         }
 
@@ -395,7 +395,7 @@ export default function Page() {
       } catch (e: any) {
         if (!alive) return
         if (e?.name === "AbortError") return
-        setErr(e?.message || "Şikayet alınamadı.")
+        setErr(e?.message || "Sorun alınamadı.")
         setComplaint(null)
         setSimilar([])
       } finally {
@@ -451,16 +451,16 @@ export default function Page() {
       <div className="border-b border-white/10 bg-[#1F2333] text-white">
         <div className="mx-auto flex w-full max-w-screen-2xl items-center justify-between gap-3 px-4 py-2.5 sm:px-6 lg:px-10 2xl:px-14">
           <div className="text-sm">
-            Şikayet detayı <span className="ml-2 text-white/70">• güvenli paylaşım</span>
+            Sorun detayı <span className="ml-2 text-white/70">• güvenli paylaşım</span>
           </div>
           <div className="hidden items-center gap-2 text-sm text-white/80 sm:flex">
-            ⌘K / Ctrl+K → <span className="font-semibold text-white">Şikayet Yaz</span>
+            ⌘K / Ctrl+K → <span className="font-semibold text-white">Sorun Yaz</span>
           </div>
         </div>
       </div>
 
       <PublicTopbar
-        subtitle="Şikayetler"
+        subtitle="Sorunlar"
         showSearchStub={false} // istersen true (detay sayfasında input stub)
         nextUrlForAuth="/sikayetler" // ya da mevcut sayfa path’in
       />
@@ -489,14 +489,14 @@ export default function Page() {
           </div>
         ) : err ? (
           <div className="mt-6 rounded-[34px] border border-white/10 bg-white/5 p-10 text-white/70 backdrop-blur">
-            <div className="font-semibold text-white/90">Şikayet yüklenemedi</div>
+            <div className="font-semibold text-white/90">SOrun yüklenemedi</div>
             <div className="mt-2">{err}</div>
             <div className="mt-4 flex gap-2">
               <PillButton variant="ghost" onClick={goList}>
-                Şikayetlere dön
+                Sorunlara dön
               </PillButton>
               <PillButton variant="secondary" onClick={goWrite}>
-                Şikayet Yaz
+                Sorun Yaz
               </PillButton>
             </div>
           </div>
@@ -569,7 +569,7 @@ export default function Page() {
 
                       <PillButton variant="white" onClick={goWrite}>
                         <Plus className="h-4 w-4" />
-                        Şikayet Yaz
+                        Sorun Yaz
                       </PillButton>
                     </div>
                   </div>
@@ -713,7 +713,7 @@ export default function Page() {
                   <div className="mt-4 flex flex-col gap-2">
                     <PillButton variant="secondary" onClick={goWrite}>
                       <Plus className="h-4 w-4" />
-                      Şikayet Yaz
+                      Sorun Yaz
                     </PillButton>
 
                     <div className="flex gap-2">
@@ -743,7 +743,7 @@ export default function Page() {
 
                 <div className="rounded-[30px] border border-white/10 bg-white/5 p-6 backdrop-blur">
                   <div className="flex items-center justify-between gap-3">
-                    <div className="text-sm font-semibold text-white/90">Benzer şikayetler</div>
+                    <div className="text-sm font-semibold text-white/90">Benzer sorunlar</div>
                     <button className="text-xs text-white/70 hover:text-white" onClick={goList} type="button">
                       Hepsini gör
                     </button>
@@ -832,10 +832,10 @@ export default function Page() {
           <div className="text-xs text-white/60">Paylaşırken kişisel veri yazma. Saygılı iletişim, güçlü topluluk.</div>
           <div className="flex items-center gap-2">
             <PillButton variant="ghost" onClick={goList}>
-              Şikayetlere dön
+              Sorunlara dön
             </PillButton>
             <PillButton variant="secondary" onClick={goWrite}>
-              Şikayet Yaz
+              Sorun Yaz
             </PillButton>
           </div>
         </div>

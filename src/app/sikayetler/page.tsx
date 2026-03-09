@@ -645,7 +645,7 @@ export default function Page() {
       <div className="border-b border-white/10 bg-[#1F2333] text-white">
         <div className="mx-auto flex w-full max-w-screen-2xl items-center justify-between gap-3 px-4 py-2.5 sm:px-6 lg:px-10 2xl:px-14">
           <div className="text-sm">
-            Şikayetler •{" "}
+            Sorunlar •{" "}
             <span className="ml-2 text-white/70">{loading ? "yükleniyor" : `${formatTR(total)} kayıt`}</span>
           </div>
 
@@ -653,7 +653,7 @@ export default function Page() {
         </div>
       </div>
 
-      <PublicTopbar subtitle="Şikayetler" showSearchStub={false} nextUrlForAuth="/sikayetler" />
+      <PublicTopbar subtitle="Sorunlar" showSearchStub={false} nextUrlForAuth="/sikayetler" />
 
       <main className="mx-auto w-full max-w-screen-2xl px-4 pb-16 sm:px-6 lg:px-10 2xl:px-14">
         {/* HEADER */}
@@ -661,7 +661,7 @@ export default function Page() {
           <div className="flex flex-col items-start justify-between gap-5 md:flex-row md:items-end">
             <div>
               <h1 className="text-[34px] font-semibold tracking-tight text-white sm:text-[36px] md:text-[44px]">
-                Şikayetler
+                Sorunlar
               </h1>
               <p className="mt-2 max-w-2xl text-sm leading-relaxed text-white/70">
                 Arama yap, kategori seç, sıralamayı değiştir. Detaya girmek için karta tıkla.
@@ -717,7 +717,7 @@ export default function Page() {
                 Geri
               </PillButton>
               <PillButton variant="secondary" href="/sikayet-yaz">
-                Şikayet Yaz
+                Sorununu Yaz
               </PillButton>
             </div>
           </div>
