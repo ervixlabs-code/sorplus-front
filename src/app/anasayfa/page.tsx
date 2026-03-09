@@ -3,7 +3,6 @@
 
 import React, { useEffect, useMemo, useRef, useState } from "react"
 import { useRouter } from "next/navigation"
-import Link from "next/link"
 import clsx from "clsx"
 import {
   ChevronLeft,
@@ -11,7 +10,6 @@ import {
   ChevronDown,
   Search,
   Plus,
-  LogIn,
   Sparkles,
   Eye,
   MessageSquare,
@@ -19,12 +17,9 @@ import {
   BadgeCheck,
   Shield,
   TrendingUp,
-  UserPlus,
 } from "lucide-react"
 
 import PublicTopbar from "@/components/PublicTopbar"
-
-
 import Footer from "@/components/Footer"
 
 /* ================== TYPES ================== */
@@ -306,7 +301,6 @@ export default function Page() {
   const heroTrackRef = useRef<HTMLDivElement | null>(null)
   const dragRef = useRef({ isDown: false, startX: 0, deltaX: 0, pointerId: -1 })
 
-  // trending data (gundem)
   const trending = useMemo<TrendingComplaint[]>(
     () => [
       {
@@ -388,7 +382,6 @@ export default function Page() {
     []
   )
 
-  // “Çok Konuşulanlar” datası
   const talked = useMemo<TalkCard[]>(
     () => [
       {
@@ -425,7 +418,6 @@ export default function Page() {
     []
   )
 
-  // bottom “experience feed” demo
   const experiences = useMemo<ExperienceItem[]>(
     () => [
       {
@@ -498,7 +490,6 @@ export default function Page() {
   }
   const heroSlide = HERO_SLIDES[heroIndex]
 
-  // HERO swipe
   const onHeroPointerDown = (e: React.PointerEvent) => {
     if (e.pointerType === "mouse" && e.button !== 0) return
     dragRef.current.isDown = true
@@ -546,7 +537,6 @@ export default function Page() {
     el.style.transform = `translateX(${-heroIndex * 100}%)`
   }, [heroIndex])
 
-  // ⌘K / Ctrl+K → /sikayet-yaz
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
@@ -557,19 +547,6 @@ export default function Page() {
     window.addEventListener("keydown", onKey)
     return () => window.removeEventListener("keydown", onKey)
   }, [router])
-
-  // ===========================
-  // ✅ GÜNDEM MARQUEE: 2 LANE ONLY
-  // ===========================
-  const laneA = trending.filter((_, i) => i % 2 === 0)
-  const laneB = trending.filter((_, i) => i % 2 === 1)
-
-  const laneA2 = [...laneA, ...laneA]
-  const laneB2 = [...laneB, ...laneB]
-
-  // ✅ sadece 2 hız: ön hızlı, arka yavaş
-  const laneFast = Math.max(18, laneA.length * 6) // foreground
-  const laneSlow = Math.max(28, laneB.length * 8) // background
 
   const searchToList = () => {
     const q = query.trim()
@@ -582,35 +559,16 @@ export default function Page() {
 
   return (
     <div className="relative min-h-screen bg-[#0B1020] text-slate-100">
-      {/* GLOBAL KEYFRAMES */}
       <style jsx global>{`
-  @keyframes marquee {
-    0% { transform: translate3d(0,0,0); }
-    100% { transform: translate3d(-50%,0,0); }
-  }
-  @keyframes floaty {
-    0% { transform: translateY(0px); }
-    50% { transform: translateY(-10px); }
-    100% { transform: translateY(0px); }
-  }
-  .no-scrollbar::-webkit-scrollbar { display: none; }
-  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        @keyframes floaty {
+          0% { transform: translateY(0px); }
+          50% { transform: translateY(-10px); }
+          100% { transform: translateY(0px); }
+        }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      `}</style>
 
-  /* ✅ MARQUEE CLASSES (garanti çalışır) */
-  .marq {
-    animation-name: marquee;
-    animation-duration: var(--dur, 24s);
-    animation-timing-function: linear;
-    animation-iteration-count: infinite;
-    animation-play-state: running;
-    transform: translate3d(0,0,0);
-    will-change: transform;
-  }
-  .marq:hover { animation-play-state: paused; } /* hover’da durmasını istersen kalsın */
-`}</style>
-
-
-      {/* 🌌 GLOBAL DARK GRID BACKGROUND */}
       <div className="pointer-events-none fixed inset-0 -z-10">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_10%,rgba(99,102,241,0.22),transparent_45%),radial-gradient(circle_at_80%_20%,rgba(16,185,129,0.20),transparent_40%),radial-gradient(circle_at_50%_90%,rgba(249,115,22,0.16),transparent_50%)]" />
         <div
@@ -626,15 +584,12 @@ export default function Page() {
         <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/60" />
       </div>
 
-<PublicTopbar
-  subtitle="Şikayetler"
-  showSearchStub={false} // istersen true (detay sayfasında input stub)
-  nextUrlForAuth="/sikayetler" // ya da mevcut sayfa path’in
-/>
+      <PublicTopbar
+        subtitle="Şikayetler"
+        showSearchStub={false}
+        nextUrlForAuth="/sikayetler"
+      />
 
-
-
-      {/* TOP INFO BAND */}
       <div className="border-b border-white/10 bg-[#1F2333] text-white">
         <div className="mx-auto flex w-full max-w-screen-2xl items-center justify-between gap-3 px-4 py-2.5 sm:px-6 lg:px-10 2xl:px-14">
           <div className="text-sm">
@@ -647,9 +602,7 @@ export default function Page() {
         </div>
       </div>
 
-      {/* CONTENT */}
       <main className="mx-auto w-full max-w-screen-2xl px-4 pb-16 sm:px-6 lg:px-10 2xl:px-14">
-        {/* HERO SLIDER */}
         <section className="pt-8 md:pt-10">
           <div className="grid grid-cols-1 gap-6 md:grid-cols-12 md:gap-10">
             <div className="md:col-span-5">
@@ -664,6 +617,10 @@ export default function Page() {
               </h1>
 
               <p className="mt-4 max-w-xl text-base leading-relaxed text-white/70 md:text-lg">{heroSlide.desc}</p>
+
+              <div className="mt-4 flex flex-wrap gap-3">
+                <CategoryDropdown value={category} onChange={setCategory} />
+              </div>
 
               <div className="mt-6">
                 <div className="flex items-center overflow-hidden rounded-full border border-white/10 bg-white/10 shadow-sm backdrop-blur">
@@ -768,7 +725,6 @@ export default function Page() {
           </div>
         </section>
 
-        {/* GÜNDEMDEKİ ŞİKAYETLER — FULL BLEED */}
         <section id="gundem" className="relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] mt-14 w-screen py-12">
           <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-[#0B1020] to-transparent" />
           <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-[#0B1020] to-transparent" />
@@ -778,7 +734,7 @@ export default function Page() {
               <div>
                 <h2 className="text-[30px] font-semibold tracking-tight text-white">Gündemdeki Şikayetler</h2>
                 <p className="mt-1 text-sm text-white/65">
-                  Toplulukta en çok konuşulan başlıklar — akış halinde görünür.
+                  Toplulukta en çok konuşulan başlıklar — premium curved görünümle.
                 </p>
               </div>
 
@@ -798,49 +754,8 @@ export default function Page() {
             </div>
           </div>
 
-          {/* ✅ MARQUEE: 2 LINE */}
-          <div className="mt-8 space-y-6">
-            {/* LAYER 1 (FAST / foreground) */}
-            <div className="relative overflow-hidden">
-              <div className="pointer-events-none absolute inset-y-0 left-0 w-28 bg-gradient-to-r from-[#0B1020] to-transparent" />
-              <div className="pointer-events-none absolute inset-y-0 right-0 w-28 bg-gradient-to-l from-[#0B1020] to-transparent" />
-
-              <div
-  className="marq flex w-[200%] gap-5"
-  style={{ ["--dur" as any]: `${laneFast}s`, opacity: 0.95 }}
->
-
-                {laneA2.map((item, idx) => (
-                  <TrendingCardMarquee key={`p1-${item.id}-${idx}`} item={item} onOpen={() => goDetail(item.id)} />
-                ))}
-              </div>
-            </div>
-
-            {/* LAYER 2 (SLOW / background) */}
-            <div className="relative overflow-hidden">
-              <div className="pointer-events-none absolute inset-y-0 left-0 w-28 bg-gradient-to-r from-[#0B1020] to-transparent" />
-              <div className="pointer-events-none absolute inset-y-0 right-0 w-28 bg-gradient-to-l from-[#0B1020] to-transparent" />
-
-              <div
-  className="marq flex w-[200%] gap-5"
-  style={{
-    ["--dur" as any]: `${laneSlow}s`,
-    opacity: 0.65,
-    transform: "translateZ(0) scale(0.98)",
-    filter: "saturate(0.95)",
-  }}
->
-
-                {laneB2.map((item, idx) => (
-                  <TrendingCardMarquee
-                    key={`p2-${item.id}-${idx}`}
-                    item={item}
-                    onOpen={() => goDetail(item.id)}
-                    tone="soft"
-                  />
-                ))}
-              </div>
-            </div>
+          <div className="mx-auto mt-8 w-full max-w-screen-2xl px-4 sm:px-6 lg:px-10 2xl:px-14">
+            <CurvedTrendingCarousel items={trending} onOpen={(id) => goDetail(id)} />
           </div>
 
           <div className="mx-auto mt-12 w-full max-w-screen-2xl px-4 sm:px-6 lg:px-10 2xl:px-14">
@@ -891,7 +806,6 @@ export default function Page() {
         </section>
       </main>
 
-      {/* SAYILARLA DENEYİM */}
       <section className="relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] w-screen bg-[#0B1020] py-16 text-white">
         <div className="pointer-events-none absolute inset-0 opacity-60 [background-image:radial-gradient(circle_at_20%_20%,rgba(99,102,241,0.25),transparent_45%),radial-gradient(circle_at_80%_30%,rgba(16,185,129,0.20),transparent_40%),radial-gradient(circle_at_50%_90%,rgba(249,115,22,0.16),transparent_45%)]" />
         <div className="pointer-events-none absolute inset-0 opacity-[0.35] [background-image:linear-gradient(to_right,rgba(255,255,255,0.07)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.07)_1px,transparent_1px)] [background-size:32px_32px]" />
@@ -951,7 +865,6 @@ export default function Page() {
             />
           </div>
 
-          {/* FEED */}
           <div className="mt-12">
             <div className="flex flex-col items-start justify-between gap-4 md:flex-row md:items-end">
               <div>
@@ -980,6 +893,7 @@ export default function Page() {
                     className="h-[44px] w-full bg-transparent pr-4 text-sm text-white placeholder:text-white/45 focus:outline-none sm:w-[280px]"
                     disabled
                     value=""
+                    readOnly
                   />
                 </div>
 
@@ -1030,34 +944,220 @@ export default function Page() {
   )
 }
 
-/* ================== TRENDING CARD (MARQUEE) ================== */
-function TrendingCardMarquee({
-  item,
+/* ================== CURVED TRENDING CAROUSEL ================== */
+function CurvedTrendingCarousel({
+  items,
   onOpen,
-  tone = "bold",
 }: {
-  item: TrendingComplaint
-  onOpen: () => void
-  tone?: "bold" | "soft"
+  items: TrendingComplaint[]
+  onOpen: (id: string) => void
 }) {
-  const cardBase =
-    "group text-left shrink-0 select-none rounded-[26px] border border-white/10 shadow-[0_18px_50px_-35px_rgba(0,0,0,0.55)] transition"
-  const cardBg =
-    tone === "bold"
-      ? "bg-white hover:-translate-y-0.5 hover:bg-white/95"
-      : "bg-white/90 backdrop-blur hover:-translate-y-0.5 hover:bg-white"
+  const [active, setActive] = useState(0)
+  const [isPaused, setIsPaused] = useState(false)
+  const touchStartX = useRef<number | null>(null)
+  const total = items.length
+
+  const goNext = () => setActive((prev) => (prev + 1) % total)
+  const goPrev = () => setActive((prev) => (prev - 1 + total) % total)
+
+  useEffect(() => {
+    if (isPaused || total <= 1) return
+    const timer = window.setInterval(() => {
+      setActive((prev) => (prev + 1) % total)
+    }, 3200)
+
+    return () => window.clearInterval(timer)
+  }, [isPaused, total])
+
+  const getOffset = (index: number) => {
+    let diff = index - active
+    const half = Math.floor(total / 2)
+
+    if (diff > half) diff -= total
+    if (diff < -half) diff += total
+
+    return diff
+  }
+
+  const onTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
+    touchStartX.current = e.touches[0]?.clientX ?? null
+  }
+
+  const onTouchEnd = (e: React.TouchEvent<HTMLDivElement>) => {
+    if (touchStartX.current == null) return
+    const endX = e.changedTouches[0]?.clientX ?? 0
+    const delta = endX - touchStartX.current
+
+    if (delta > 50) goPrev()
+    else if (delta < -50) goNext()
+
+    touchStartX.current = null
+  }
 
   return (
-    <button onClick={onOpen} className={clsx(cardBase, cardBg)} style={{ width: 360 }}>
-      <div className="p-5">
-        <div className="flex items-start justify-between gap-3">
+    <div
+      className="relative overflow-hidden rounded-[34px] border border-white/10 bg-white/[0.04] px-3 py-8 shadow-[0_35px_120px_-90px_rgba(0,0,0,0.9)] backdrop-blur md:px-6 md:py-10"
+      onMouseEnter={() => setIsPaused(true)}
+      onMouseLeave={() => setIsPaused(false)}
+      onTouchStart={onTouchStart}
+      onTouchEnd={onTouchEnd}
+    >
+      <div className="pointer-events-none absolute inset-0 opacity-70 [background-image:radial-gradient(circle_at_20%_10%,rgba(99,102,241,0.22),transparent_42%),radial-gradient(circle_at_85%_30%,rgba(16,185,129,0.16),transparent_40%),radial-gradient(circle_at_50%_100%,rgba(249,115,22,0.12),transparent_45%)]" />
+      <div className="pointer-events-none absolute inset-0 opacity-[0.18] [background-image:linear-gradient(to_right,rgba(255,255,255,0.08)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.08)_1px,transparent_1px)] [background-size:28px_28px]" />
+      <div className="pointer-events-none absolute left-1/2 top-1/2 h-[260px] w-[260px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-indigo-500/10 blur-3xl" />
+
+      <div className="relative mb-6 flex items-center justify-between px-2 md:px-4">
+        <div>
+          <div className="text-xs uppercase tracking-[0.22em] text-white/45">Curved Showcase</div>
+          <div className="mt-1 text-sm font-semibold text-white/90">Gündemde öne çıkan başlıklar</div>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={goPrev}
+            className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/10 text-white/80 backdrop-blur transition hover:bg-white/15"
+            aria-label="Önceki"
+          >
+            <ChevronLeft className="h-4 w-4" />
+          </button>
+          <button
+            type="button"
+            onClick={goNext}
+            className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/10 text-white/80 backdrop-blur transition hover:bg-white/15"
+            aria-label="Sonraki"
+          >
+            <ChevronRight className="h-4 w-4" />
+          </button>
+        </div>
+      </div>
+
+      <div className="relative h-[420px] md:h-[470px]">
+        {items.map((item, index) => {
+          const offset = getOffset(index)
+          const abs = Math.abs(offset)
+          const isActive = offset === 0
+
+          if (abs > 3) return null
+
+          const translateX =
+            offset === 0
+              ? "0%"
+              : offset === -1
+              ? "-62%"
+              : offset === 1
+              ? "62%"
+              : offset === -2
+              ? "-108%"
+              : offset === 2
+              ? "108%"
+              : offset === -3
+              ? "-142%"
+              : "142%"
+
+          const translateY =
+            offset === 0
+              ? "0px"
+              : abs === 1
+              ? "34px"
+              : abs === 2
+              ? "72px"
+              : "96px"
+
+          const rotate =
+            offset === 0
+              ? "0deg"
+              : offset < 0
+              ? `${Math.min(abs * 7, 16)}deg`
+              : `${-Math.min(abs * 7, 16)}deg`
+
+          const scale =
+            offset === 0
+              ? 1
+              : abs === 1
+              ? 0.88
+              : abs === 2
+              ? 0.76
+              : 0.66
+
+          const opacity =
+            offset === 0
+              ? 1
+              : abs === 1
+              ? 0.82
+              : abs === 2
+              ? 0.45
+              : 0.2
+
+          const zIndex = 50 - abs
+
+          return (
+            <div
+              key={item.id}
+              className="absolute left-1/2 top-4 w-[84vw] max-w-[430px] -translate-x-1/2 transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] md:w-[430px]"
+              style={{
+                transform: `translateX(${translateX}) translateY(${translateY}) rotate(${rotate}) scale(${scale})`,
+                opacity,
+                zIndex,
+                filter: isActive ? "none" : "saturate(0.9)",
+              }}
+            >
+              <CurvedTrendingCard item={item} active={isActive} onOpen={() => onOpen(item.id)} />
+            </div>
+          )
+        })}
+      </div>
+
+      <div className="relative mt-4 flex items-center justify-center gap-2">
+        {items.map((_, i) => (
+          <button
+            key={i}
+            type="button"
+            onClick={() => setActive(i)}
+            className={clsx(
+              "h-2.5 rounded-full transition-all",
+              i === active ? "w-8 bg-white" : "w-2.5 bg-white/30 hover:bg-white/50"
+            )}
+            aria-label={`Kart ${i + 1}`}
+          />
+        ))}
+      </div>
+    </div>
+  )
+}
+
+function CurvedTrendingCard({
+  item,
+  active,
+  onOpen,
+}: {
+  item: TrendingComplaint
+  active: boolean
+  onOpen: () => void
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onOpen}
+      className={clsx(
+        "group w-full overflow-hidden rounded-[30px] border text-left shadow-[0_30px_90px_-50px_rgba(0,0,0,0.75)] transition",
+        active
+          ? "border-white/15 bg-white text-slate-950"
+          : "border-white/10 bg-white/90 text-slate-950"
+      )}
+    >
+      <div className="relative p-6">
+        <div className="absolute inset-0 opacity-[0.10] [background-image:radial-gradient(circle_at_20%_20%,rgba(99,102,241,0.55),transparent_38%),radial-gradient(circle_at_80%_30%,rgba(16,185,129,0.45),transparent_35%),radial-gradient(circle_at_50%_100%,rgba(249,115,22,0.32),transparent_42%)]" />
+
+        <div className="relative flex items-start justify-between gap-3">
           <div className="flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-full bg-slate-900 font-extrabold text-white">
+            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-slate-900 text-base font-extrabold text-white">
               {item.avatarLetter}
             </div>
+
             <div>
               <div className="text-sm font-semibold text-slate-900">{item.userName}</div>
-              <div className="mt-1 inline-flex items-center rounded-full bg-indigo-50 px-2.5 py-1 text-[12px] font-semibold text-indigo-700">
+              <div className="mt-1 inline-flex items-center rounded-full bg-indigo-50 px-2.5 py-1 text-[11px] font-semibold text-indigo-700">
                 {item.category}
               </div>
             </div>
@@ -1065,32 +1165,36 @@ function TrendingCardMarquee({
 
           {item.hasImage ? (
             <div className="h-14 w-14 overflow-hidden rounded-2xl border border-slate-200 bg-slate-100">
-              <div className="h-full w-full bg-[linear-gradient(135deg,rgba(99,102,241,0.20),rgba(16,185,129,0.18),rgba(249,115,22,0.12))]" />
+              <div className="h-full w-full bg-[linear-gradient(135deg,rgba(99,102,241,0.20),rgba(16,185,129,0.18),rgba(249,115,22,0.14))]" />
             </div>
           ) : (
             <div className="h-14 w-14 rounded-2xl border border-slate-200 bg-slate-50" />
           )}
         </div>
 
-        <div className="mt-4 line-clamp-3 text-[17px] font-extrabold leading-snug tracking-tight text-slate-950">
+        <div className="relative mt-5 line-clamp-3 text-[20px] font-extrabold leading-snug tracking-tight text-slate-950">
           {item.title}
         </div>
 
-        <div className="mt-4 flex items-center justify-between gap-4 text-[13px] text-slate-600">
-          <span className="inline-flex items-center gap-1.5">
-            <Eye className="h-4 w-4" /> {formatTR(item.views)}
-          </span>
-          <span className="inline-flex items-center gap-1.5">
-            <MessageSquare className="h-4 w-4" /> {formatTR(item.comments)} yorum
-          </span>
+        <div className="relative mt-5 flex items-center justify-between gap-3">
+          <div className="flex flex-wrap items-center gap-3 text-[13px] text-slate-600">
+            <span className="inline-flex items-center gap-1.5">
+              <Eye className="h-4 w-4" />
+              {formatTR(item.views)}
+            </span>
+            <span className="inline-flex items-center gap-1.5">
+              <MessageSquare className="h-4 w-4" />
+              {formatTR(item.comments)} yorum
+            </span>
+          </div>
 
-          <span className="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-[12px] font-semibold text-slate-800 shadow-sm">
+          <span className="inline-flex items-center rounded-full border border-slate-200 bg-white px-3 py-1.5 text-[12px] font-semibold text-slate-800 shadow-sm">
             İncele
           </span>
         </div>
       </div>
 
-      <div className="h-2 w-full rounded-b-[26px] bg-[linear-gradient(90deg,rgba(99,102,241,0.60),rgba(16,185,129,0.55),rgba(249,115,22,0.40))]" />
+      <div className="h-2 w-full bg-[linear-gradient(90deg,rgba(99,102,241,0.60),rgba(16,185,129,0.55),rgba(249,115,22,0.45))]" />
     </button>
   )
 }
