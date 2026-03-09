@@ -489,7 +489,7 @@ export default function Page() {
           </div>
         ) : err ? (
           <div className="mt-6 rounded-[34px] border border-white/10 bg-white/5 p-10 text-white/70 backdrop-blur">
-            <div className="font-semibold text-white/90">SOrun yüklenemedi</div>
+            <div className="font-semibold text-white/90">Sorun yüklenemedi</div>
             <div className="mt-2">{err}</div>
             <div className="mt-4 flex gap-2">
               <PillButton variant="ghost" onClick={goList}>

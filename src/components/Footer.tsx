@@ -216,7 +216,7 @@ export default function Footer() {
               <span className="text-sm font-extrabold">✓</span>
             </div>
             <div className="leading-tight">
-              <div className="text-lg font-extrabold tracking-tight">deneyim</div>
+              <div className="text-lg font-extrabold tracking-tight">SorPlus</div>
               <div className="text-[11px] text-white/55">kategori bazlı platform</div>
             </div>
           </Link>
