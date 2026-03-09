@@ -298,7 +298,7 @@ export default function Footer() {
 
         <div className="mt-10 border-t border-white/10 pt-6">
           <div className="flex flex-col gap-3 text-[12px] text-white/55 md:flex-row md:items-center md:justify-between">
-            <div>© {new Date().getFullYear()} Deneyim • Tüm hakları saklıdır.</div>
+            <div>© {new Date().getFullYear()} SorPlus • Tüm hakları saklıdır.</div>
             <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
               <Link className="hover:text-white" href="/gizlilik">
                 Gizlilik
