@@ -2,7 +2,8 @@
 // app/sikayetler/page.tsx
 "use client"
 
-import React, { useEffect, useMemo, useRef, useState } from "react"
+import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react"
+import { createPortal } from "react-dom"
 import clsx from "clsx"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
@@ -27,7 +28,7 @@ import PublicTopbar from "@/components/PublicTopbar"
  */
 const API_BASE =
   process.env.NEXT_PUBLIC_PUBLIC_API_BASE?.trim() ||
-  "https://sorplus-admin-backend.onrender.com" // <- kendi public backend base'in neyse bunu yaz
+  "https://sorplus-admin-backend.onrender.com"
 
 async function safeJson(res: Response) {
   const text = await res.text()
@@ -54,7 +55,6 @@ type ComplaintItem = {
   hasBrandInText?: boolean
 }
 
-/** Backend -> esnek public complaint shape */
 type ApiComplaint = {
   id: string | number
 
@@ -246,7 +246,16 @@ function CategoryDropdown({
   onChange: (v: { id: number | null; name: string | "Tümü" }) => void
 }) {
   const [open, setOpen] = useState(false)
+  const [mounted, setMounted] = useState(false)
+  const [menuStyle, setMenuStyle] = useState<React.CSSProperties>({})
   const ref = useRef<HTMLDivElement | null>(null)
+  const buttonRef = useRef<HTMLButtonElement | null>(null)
+
+  const items = [{ id: null, name: "Tümü" as const }, ...options]
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   useEffect(() => {
     const onDoc = (e: MouseEvent) => {
@@ -257,63 +266,135 @@ function CategoryDropdown({
     return () => document.removeEventListener("mousedown", onDoc)
   }, [])
 
-  return (
-    <div ref={ref} className="relative">
-      <div className="mb-1 text-[11px] font-light text-white/55">Kategori</div>
-      <button
-        type="button"
-        onClick={() => setOpen((s) => !s)}
-        className="flex h-[46px] min-w-[220px] items-center justify-between gap-2 rounded-2xl border border-white/10 bg-white/10 px-4 text-sm text-white/90 shadow-sm backdrop-blur hover:bg-white/15 focus:outline-none focus:ring-4 focus:ring-white/10"
-      >
-        <span className="truncate">{value}</span>
-        <ChevronDown className={clsx("h-4 w-4 text-white/70 transition", open && "rotate-180")} />
-      </button>
+  useLayoutEffect(() => {
+    if (!open || !buttonRef.current) return
 
-      {open ? (
-        <div className="absolute z-40 mt-2 w-full overflow-hidden rounded-2xl border border-white/10 bg-[#0B1020] shadow-2xl">
-          <div className="max-h-[280px] overflow-auto p-1">
-            <button
-              type="button"
-              onClick={() => {
-                onChange({ id: null, name: "Tümü" })
-                setOpen(false)
-              }}
-              className={clsx(
-                "w-full rounded-xl px-3 py-2 text-left text-sm",
-                value === "Tümü" ? "bg-white/10 text-white" : "hover:bg-white/5 text-white/85"
-              )}
-            >
-              Tümü
-            </button>
+    const updatePosition = () => {
+      const rect = buttonRef.current!.getBoundingClientRect()
+      const menuWidth = rect.width
+      const gap = 10
+      const menuHeightEstimate = Math.min(280 + 44, 340)
 
-            {options.map((opt) => (
-              <button
-                key={opt.id}
-                type="button"
-                onClick={() => {
-                  onChange({ id: opt.id, name: opt.name })
-                  setOpen(false)
-                }}
-                className={clsx(
-                  "w-full rounded-xl px-3 py-2 text-left text-sm",
-                  opt.name === value ? "bg-white/10 text-white" : "hover:bg-white/5 text-white/85"
-                )}
-              >
-                {opt.name}
-              </button>
-            ))}
+      const spaceBelow = window.innerHeight - rect.bottom
+      const spaceAbove = rect.top
+      const openUp = spaceBelow < menuHeightEstimate && spaceAbove > spaceBelow
+
+      const top = openUp ? rect.top - gap : rect.bottom + gap
+      const left = rect.left
+
+      setMenuStyle({
+        position: "fixed",
+        top,
+        left,
+        width: menuWidth,
+        zIndex: 9999,
+        transform: openUp ? "translateY(-100%)" : "translateY(0)",
+      })
+    }
+
+    updatePosition()
+    window.addEventListener("resize", updatePosition)
+    window.addEventListener("scroll", updatePosition, true)
+
+    return () => {
+      window.removeEventListener("resize", updatePosition)
+      window.removeEventListener("scroll", updatePosition, true)
+    }
+  }, [open])
+
+  const menu = mounted
+    ? createPortal(
+        <div
+          style={menuStyle}
+          className={clsx(
+            "origin-top overflow-hidden rounded-2xl border border-white/10 bg-[#0B1020]/95 shadow-[0_24px_80px_-28px_rgba(0,0,0,0.85)] backdrop-blur-xl transition-all duration-200",
+            open
+              ? "pointer-events-auto scale-100 opacity-100"
+              : "pointer-events-none scale-[0.98] opacity-0"
+          )}
+        >
+          <div className="border-b border-white/8 px-3 py-2 text-[11px] uppercase tracking-[0.14em] text-white/40">
+            Kategori Seç
           </div>
-        </div>
-      ) : null}
-    </div>
+
+          <div className="max-h-[280px] overflow-y-auto p-2">
+            {items.map((opt) => {
+              const active = opt.name === value
+              return (
+                <button
+                  key={String(opt.id ?? "all")}
+                  type="button"
+                  onClick={() => {
+                    onChange({ id: opt.id, name: opt.name })
+                    setOpen(false)
+                  }}
+                  className={clsx(
+                    "flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left text-sm transition",
+                    active
+                      ? "bg-white/12 text-white"
+                      : "text-white/80 hover:bg-white/6 hover:text-white"
+                  )}
+                >
+                  <span className="truncate">{opt.name}</span>
+
+                  <span
+                    className={clsx(
+                      "ml-3 h-2.5 w-2.5 shrink-0 rounded-full transition",
+                      active ? "bg-emerald-400 shadow-[0_0_0_4px_rgba(52,211,153,0.12)]" : "bg-transparent"
+                    )}
+                  />
+                </button>
+              )
+            })}
+          </div>
+        </div>,
+        document.body
+      )
+    : null
+
+  return (
+    <>
+      <div ref={ref} className="relative min-w-[220px]">
+        <div className="mb-1 text-[11px] font-light text-white/55">Kategori</div>
+
+        <button
+          ref={buttonRef}
+          type="button"
+          onClick={() => setOpen((s) => !s)}
+          className={clsx(
+            "flex h-[46px] w-full items-center justify-between gap-2 rounded-2xl px-4 text-sm shadow-sm backdrop-blur transition focus:outline-none focus:ring-4",
+            open
+              ? "border border-white/20 bg-white/14 text-white ring-white/10"
+              : "border border-white/10 bg-white/10 text-white/90 hover:bg-white/15 focus:ring-white/10"
+          )}
+        >
+          <span className="truncate">{value}</span>
+          <ChevronDown
+            className={clsx(
+              "h-4 w-4 shrink-0 text-white/70 transition duration-200",
+              open && "rotate-180"
+            )}
+          />
+        </button>
+      </div>
+
+      {menu}
+    </>
   )
 }
 
 function SortDropdown({ value, onChange }: { value: SortKey; onChange: (v: SortKey) => void }) {
   const [open, setOpen] = useState(false)
+  const [mounted, setMounted] = useState(false)
+  const [menuStyle, setMenuStyle] = useState<React.CSSProperties>({})
   const ref = useRef<HTMLDivElement | null>(null)
+  const buttonRef = useRef<HTMLButtonElement | null>(null)
 
   const label = value === "new" ? "En Yeni" : value === "views" ? "En Çok Görüntülenen" : "En Çok Yorumlanan"
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   useEffect(() => {
     const onDoc = (e: MouseEvent) => {
@@ -324,45 +405,123 @@ function SortDropdown({ value, onChange }: { value: SortKey; onChange: (v: SortK
     return () => document.removeEventListener("mousedown", onDoc)
   }, [])
 
-  return (
-    <div ref={ref} className="relative">
-      <div className="mb-1 text-[11px] font-light text-white/55">Sıralama</div>
-      <button
-        type="button"
-        onClick={() => setOpen((s) => !s)}
-        className="flex h-[46px] min-w-[220px] items-center justify-between gap-2 rounded-2xl border border-white/10 bg-white/10 px-4 text-sm text-white/90 shadow-sm backdrop-blur hover:bg-white/15 focus:outline-none focus:ring-4 focus:ring-white/10"
-      >
-        <span className="truncate">{label}</span>
-        <ChevronDown className={clsx("h-4 w-4 text-white/70 transition", open && "rotate-180")} />
-      </button>
+  useLayoutEffect(() => {
+    if (!open || !buttonRef.current) return
 
-      {open ? (
-        <div className="absolute z-40 mt-2 w-full overflow-hidden rounded-2xl border border-white/10 bg-[#0B1020] shadow-2xl">
-          <div className="p-1">
+    const updatePosition = () => {
+      const rect = buttonRef.current!.getBoundingClientRect()
+      const menuWidth = rect.width
+      const gap = 10
+      const menuHeightEstimate = 220
+
+      const spaceBelow = window.innerHeight - rect.bottom
+      const spaceAbove = rect.top
+      const openUp = spaceBelow < menuHeightEstimate && spaceAbove > spaceBelow
+
+      const top = openUp ? rect.top - gap : rect.bottom + gap
+      const left = rect.left
+
+      setMenuStyle({
+        position: "fixed",
+        top,
+        left,
+        width: menuWidth,
+        zIndex: 9999,
+        transform: openUp ? "translateY(-100%)" : "translateY(0)",
+      })
+    }
+
+    updatePosition()
+    window.addEventListener("resize", updatePosition)
+    window.addEventListener("scroll", updatePosition, true)
+
+    return () => {
+      window.removeEventListener("resize", updatePosition)
+      window.removeEventListener("scroll", updatePosition, true)
+    }
+  }, [open])
+
+  const menu = mounted
+    ? createPortal(
+        <div
+          style={menuStyle}
+          className={clsx(
+            "origin-top overflow-hidden rounded-2xl border border-white/10 bg-[#0B1020]/95 shadow-[0_24px_80px_-28px_rgba(0,0,0,0.85)] backdrop-blur-xl transition-all duration-200",
+            open
+              ? "pointer-events-auto scale-100 opacity-100"
+              : "pointer-events-none scale-[0.98] opacity-0"
+          )}
+        >
+          <div className="border-b border-white/8 px-3 py-2 text-[11px] uppercase tracking-[0.14em] text-white/40">
+            Sıralama Seç
+          </div>
+
+          <div className="p-2">
             {[
               { k: "new", t: "En Yeni" },
               { k: "views", t: "En Çok Görüntülenen" },
               { k: "comments", t: "En Çok Yorumlanan" },
-            ].map((it) => (
-              <button
-                key={it.k}
-                type="button"
-                onClick={() => {
-                  onChange(it.k as SortKey)
-                  setOpen(false)
-                }}
-                className={clsx(
-                  "w-full rounded-xl px-3 py-2 text-left text-sm",
-                  it.k === value ? "bg-white/10 text-white" : "hover:bg-white/5 text-white/85"
-                )}
-              >
-                {it.t}
-              </button>
-            ))}
+            ].map((it) => {
+              const active = it.k === value
+              return (
+                <button
+                  key={it.k}
+                  type="button"
+                  onClick={() => {
+                    onChange(it.k as SortKey)
+                    setOpen(false)
+                  }}
+                  className={clsx(
+                    "flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left text-sm transition",
+                    active
+                      ? "bg-white/12 text-white"
+                      : "text-white/80 hover:bg-white/6 hover:text-white"
+                  )}
+                >
+                  <span className="truncate">{it.t}</span>
+                  <span
+                    className={clsx(
+                      "ml-3 h-2.5 w-2.5 shrink-0 rounded-full transition",
+                      active ? "bg-indigo-400 shadow-[0_0_0_4px_rgba(129,140,248,0.12)]" : "bg-transparent"
+                    )}
+                  />
+                </button>
+              )
+            })}
           </div>
-        </div>
-      ) : null}
-    </div>
+        </div>,
+        document.body
+      )
+    : null
+
+  return (
+    <>
+      <div ref={ref} className="relative min-w-[220px]">
+        <div className="mb-1 text-[11px] font-light text-white/55">Sıralama</div>
+
+        <button
+          ref={buttonRef}
+          type="button"
+          onClick={() => setOpen((s) => !s)}
+          className={clsx(
+            "flex h-[46px] w-full items-center justify-between gap-2 rounded-2xl px-4 text-sm shadow-sm backdrop-blur transition focus:outline-none focus:ring-4",
+            open
+              ? "border border-white/20 bg-white/14 text-white ring-white/10"
+              : "border border-white/10 bg-white/10 text-white/90 hover:bg-white/15 focus:ring-white/10"
+          )}
+        >
+          <span className="truncate">{label}</span>
+          <ChevronDown
+            className={clsx(
+              "h-4 w-4 shrink-0 text-white/70 transition duration-200",
+              open && "rotate-180"
+            )}
+          />
+        </button>
+      </div>
+
+      {menu}
+    </>
   )
 }
 
@@ -451,7 +610,6 @@ export default function Page() {
   const [loading, setLoading] = useState(true)
   const [err, setErr] = useState<string | null>(null)
 
-  // Public için kısayol hint yazısı yok, ama input focus kısayolu kalsın.
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       const isMac = navigator.platform.toLowerCase().includes("mac")
@@ -464,7 +622,6 @@ export default function Page() {
     return () => window.removeEventListener("keydown", onKey)
   }, [])
 
-  // categories
   useEffect(() => {
     let alive = true
     ;(async () => {
@@ -473,10 +630,10 @@ export default function Page() {
         const data = await safeJson(res)
         if (!res.ok) return
         const list: ApiCategory[] = Array.isArray(data) ? data : data?.items || data?.data || []
-        const clean = list.filter((c) => c && typeof c.id === "number" && typeof c.name === "string")
+        const clean = list.filter((c) => c && c.id && c.name)
         if (alive) setCategories(clean)
       } catch {
-        // publicte sessiz geç
+        //
       }
     })()
     return () => {
@@ -484,12 +641,10 @@ export default function Page() {
     }
   }, [])
 
-  // filter changes => reset page
   useEffect(() => {
     setPage(1)
   }, [categorySel.id, sort, q])
 
-  // complaints fetch
   useEffect(() => {
     let alive = true
     const controller = new AbortController()
@@ -625,7 +780,6 @@ export default function Page() {
         }
       `}</style>
 
-      {/* 🌌 GLOBAL DARK GRID BACKGROUND */}
       <div className="pointer-events-none fixed inset-0 -z-10">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_10%,rgba(99,102,241,0.22),transparent_45%),radial-gradient(circle_at_80%_20%,rgba(16,185,129,0.20),transparent_40%),radial-gradient(circle_at_50%_90%,rgba(249,115,22,0.16),transparent_50%)]" />
         <div
@@ -641,22 +795,18 @@ export default function Page() {
         <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/60" />
       </div>
 
-      {/* TOP INFO BAND (sade) */}
       <div className="border-b border-white/10 bg-[#1F2333] text-white">
         <div className="mx-auto flex w-full max-w-screen-2xl items-center justify-between gap-3 px-4 py-2.5 sm:px-6 lg:px-10 2xl:px-14">
           <div className="text-sm">
             Sorunlar •{" "}
             <span className="ml-2 text-white/70">{loading ? "yükleniyor" : `${formatTR(total)} kayıt`}</span>
           </div>
-
-          {/* public için gereksiz kısayol text kaldırıldı */}
         </div>
       </div>
 
       <PublicTopbar subtitle="Sorunlar" showSearchStub={false} nextUrlForAuth="/sikayetler" />
 
       <main className="mx-auto w-full max-w-screen-2xl px-4 pb-16 sm:px-6 lg:px-10 2xl:px-14">
-        {/* HEADER */}
         <section className="pt-8">
           <div className="flex flex-col items-start justify-between gap-5 md:flex-row md:items-end">
             <div>
@@ -685,7 +835,7 @@ export default function Page() {
                 </div>
               </div>
 
-              <div className="no-scrollbar flex items-end gap-3 overflow-x-auto pb-1">
+              <div className="no-scrollbar flex items-end gap-3 overflow-x-auto overflow-y-visible pb-1">
                 <div className="shrink-0">
                   <CategoryDropdown
                     value={categorySel.name}
@@ -693,6 +843,7 @@ export default function Page() {
                     onChange={(v) => setCategorySel({ id: v.id, name: v.name })}
                   />
                 </div>
+
                 <div className="shrink-0">
                   <SortDropdown value={sort} onChange={setSort} />
                 </div>
@@ -700,7 +851,6 @@ export default function Page() {
             </div>
           </div>
 
-          {/* FILTER SUMMARY + CTA (public clean) */}
           <div className="mt-6 flex flex-wrap items-center justify-between gap-3 rounded-[24px] border border-white/10 bg-white/5 px-5 py-4 backdrop-blur">
             <div className="flex items-center gap-2 text-xs text-white/65">
               <SlidersHorizontal className="h-4 w-4 text-white/60" />
@@ -723,7 +873,6 @@ export default function Page() {
           </div>
         </section>
 
-        {/* GRID */}
         <section className="mt-8">
           {loading ? (
             <div className="rounded-[28px] border border-white/10 bg-white/5 p-10 text-center text-white/70 backdrop-blur">
@@ -742,7 +891,6 @@ export default function Page() {
           )}
         </section>
 
-        {/* PAGINATION */}
         <section className="mt-10 flex flex-col items-center justify-between gap-4 border-t border-white/10 pt-6 md:flex-row">
           <div className="text-xs text-white/60">
             Sayfa <span className="font-semibold text-white/85">{pageSafe}</span> /{" "}
@@ -781,7 +929,7 @@ export default function Page() {
                       p === pageSafe
                         ? "border-white/20 bg-white text-black"
                         : "border-white/10 bg-white/10 text-white/85 hover:bg-white/15",
-                      loading && "opacity-60 cursor-not-allowed"
+                      loading && "cursor-not-allowed opacity-60"
                     )}
                   >
                     {p}
