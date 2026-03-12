@@ -1,15 +1,16 @@
 import Link from "next/link"
+import Image from "next/image"
 import Container from "@/components/ui/Container"
 import CTAButton from "@/components/ui/CTAButton"
 
 export default function Topbar() {
   return (
     <>
-      {/* ÜST SİYAH BAR (Şikayetvar hissi) */}
+      {/* ÜST SİYAH BAR */}
       <div className="bg-brand-primary text-white">
         <Container className="h-10 flex items-center justify-between">
           <div className="text-xs text-white/80">
-            Toplam çözüm sayısı <span className="text-white font-semibold">4.198.506</span>
+            Toplam çözüm sayısı <span className="text-white font-semibold">1.198.506</span>
           </div>
           <div className="flex items-center gap-3">
             <div className="text-xs text-white/70 hidden sm:block">
@@ -28,14 +29,16 @@ export default function Topbar() {
       {/* ANA NAV */}
       <header className="border-b border-slate-200 bg-white">
         <Container className="h-16 flex items-center gap-4">
-          <Link href="/" className="flex items-center gap-2">
-            <div className="h-9 w-9 rounded-xl bg-brand-primary text-white grid place-items-center shadow-soft">
-              <span className="font-bold">Ş</span>
-            </div>
-            <div className="leading-tight">
-              <div className="font-semibold text-brand-primary">sikayetvar</div>
-              <div className="text-[11px] text-slate-500 -mt-0.5">Kategori Bazlı</div>
-            </div>
+
+          {/* LOGO */}
+          <Link href="/" className="flex items-center">
+            <Image
+              src="/logo.png"
+              alt="Şikayetvar"
+              width={140}
+              height={40}
+              priority
+            />
           </Link>
 
           <nav className="hidden md:flex items-center gap-6 text-sm text-slate-600 ml-6">
@@ -50,6 +53,7 @@ export default function Topbar() {
             </a>
             <CTAButton href="/complaints/new">+ Şikayet Yaz</CTAButton>
           </div>
+
         </Container>
       </header>
     </>

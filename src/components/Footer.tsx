@@ -4,6 +4,7 @@
 import React, { useEffect, useMemo, useState } from "react"
 import clsx from "clsx"
 import Link from "next/link"
+import Image from "next/image"
 import { Facebook, Linkedin, Youtube, X } from "lucide-react"
 
 type FooterLinkItem = { label: string; href: string; muted?: boolean }
@@ -95,7 +96,6 @@ export default function Footer() {
         })
         if (!res.ok) {
           const body = await safeJson(res)
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           throw new Error((body as any)?.message || body || `categories ${res.status}`)
         }
         const data = await safeJson(res)
@@ -106,7 +106,6 @@ export default function Footer() {
             : (data?.items || data?.data || data?.categories || [])
 
         if (alive) setCategories(list || [])
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (e: any) {
         console.error("footer categories error:", e)
         if (alive) setCatErr(e?.message || "Kategoriler yüklenemedi")
@@ -122,7 +121,6 @@ export default function Footer() {
         })
         if (!res.ok) {
           const body = await safeJson(res)
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           throw new Error((body as any)?.message || body || `complaints ${res.status}`)
         }
         const data = await safeJson(res)
@@ -133,10 +131,9 @@ export default function Footer() {
             : (data?.items || data?.data || data?.complaints || [])
 
         if (alive) setComplaints(list || [])
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (e: any) {
         console.error("footer complaints error:", e)
-        if (alive) setCmpErr(e?.message || "Şikayetler yüklenemedii")
+        if (alive) setCmpErr(e?.message || "Şikayetler yüklenemedi")
       }
     }
 
@@ -165,10 +162,9 @@ export default function Footer() {
         const slug = (cat?.slug || "").trim()
         const id = String(cat?.id ?? "")
 
-        // ✅ en sağlam: hem slug hem id gönder
         const qs = buildQuery({
-          kategori: slug, // eski param adın kalsın
-          kategoriId: id, // garanti fallback
+          kategori: slug,
+          kategoriId: id,
         })
 
         return {
@@ -212,13 +208,13 @@ export default function Footer() {
       <div className="relative mx-auto w-full max-w-screen-2xl px-6 py-10 lg:px-10 2xl:px-14">
         <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
           <Link href="/" className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-emerald-400 text-slate-900 shadow-sm">
-              <span className="text-sm font-extrabold">✓</span>
-            </div>
-            <div className="leading-tight">
-              <div className="text-lg font-extrabold tracking-tight">SorPlus</div>
-              <div className="text-[11px] text-white/55">kategori bazlı platform</div>
-            </div>
+            <Image
+              src="/logo.png"
+              alt="SorPlus"
+              width={150}
+              height={44}
+              className="h-auto w-[120px] sm:w-[140px] lg:w-[150px] object-contain"
+            />
           </Link>
 
           <nav className="flex flex-wrap items-center gap-x-8 gap-y-3 text-[13px] text-white/70">

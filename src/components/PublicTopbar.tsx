@@ -3,9 +3,10 @@
 
 import React, { useEffect, useMemo, useState } from "react"
 import Link from "next/link"
+import Image from "next/image"
 import { usePathname, useRouter } from "next/navigation"
 import clsx from "clsx"
-import { Sparkles, LogIn, UserPlus, Search, Plus } from "lucide-react"
+import { LogIn, UserPlus, Search, Plus } from "lucide-react"
 
 /** Senin login page’te kullandığın key’ler */
 export const LS_AUTH_TOKEN_KEY = "sv_auth_token_v1"
@@ -208,7 +209,6 @@ export default function PublicTopbar({
 
   const disabled = !!disableWhileLoading
 
-  // ✅ aktif link tespiti (id sayfalarında da “Şikayetler” aktif kalsın)
   const isComplaints = pathname === "/sikayetler" || pathname?.startsWith("/sikayetler/")
   const isWrite = pathname === "/sikayet-yaz"
   const isGuide = pathname === "/rehber"
@@ -220,22 +220,22 @@ export default function PublicTopbar({
         {/* LEFT */}
         <div className="flex min-w-0 items-center gap-4">
           <Link href="/" className="flex min-w-0 items-center gap-3">
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl bg-emerald-400 text-slate-900 shadow-sm">
-              <Sparkles className="h-5 w-5" />
-            </div>
+            <Image
+              src="/logo.png"
+              alt="SorPlus"
+              width={140}
+              height={40}
+              priority
+              className="h-auto w-[120px] sm:w-[140px] object-contain"
+            />
 
             <div className="min-w-0 leading-tight">
               <div className="flex items-center gap-2">
-                <div className="truncate text-base font-extrabold tracking-tight text-white">SorPlus</div>
-                <span className="hidden rounded-full border border-white/10 bg-white/10 px-2 py-0.5 text-[10px] font-semibold text-white/80 sm:inline-flex">
-                  Beta
-                </span>
               </div>
               <div className="text-[11px] text-white/70">{subtitle || "—"}</div>
             </div>
           </Link>
 
-          {/* ✅ Desktop nav (daha belirgin) */}
           {showQuickLinks ? (
             <nav className="hidden items-center gap-2 md:flex">
               <NavItem href="/sikayetler" label="Sorunlar" active={isComplaints} disabled={disabled} />
