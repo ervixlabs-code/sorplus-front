@@ -10,7 +10,6 @@ import {
   ChevronDown,
   Search,
   Plus,
-  Sparkles,
   Eye,
   MessageSquare,
   Users,
@@ -105,8 +104,8 @@ const HERO_SLIDES = [
     eyebrow: "Moderasyon & güvenlik",
     titleA: "Daha temiz bir alan:",
     titleB: "hakaret yok",
-    desc: "Küfür/hakaret filtreleri ve moderasyon kuyruğu ile içerikler yayın öncesi kontrol edilir.",
-    ctaPrimary: "SOrununu Yaz",
+    desc: "Küfür / hakaret filtreleri ve moderasyon kuyruğu ile içerikler yayın öncesi kontrol edilir.",
+    ctaPrimary: "Sorununu Yaz",
     ctaSecondary: "Nasıl Çalışır?",
     theme: "slate" as const,
   },
@@ -122,13 +121,45 @@ function formatTR(n: number) {
 }
 
 function severityUI(s: ExperienceItem["severity"]) {
-  if (s === "Yüksek") return { label: "YÜKSEK", cls: "border-orange-400/25 bg-orange-400/10 text-orange-100" }
-  if (s === "Orta") return { label: "ORTA", cls: "border-indigo-400/25 bg-indigo-400/10 text-indigo-100" }
-  return { label: "DÜŞÜK", cls: "border-emerald-400/25 bg-emerald-400/10 text-emerald-100" }
+  if (s === "Yüksek") {
+    return {
+      label: "YÜKSEK",
+      cls: "border-orange-400/25 bg-orange-400/10 text-orange-100",
+    }
+  }
+  if (s === "Orta") {
+    return {
+      label: "ORTA",
+      cls: "border-indigo-400/25 bg-indigo-400/10 text-indigo-100",
+    }
+  }
+  return {
+    label: "DÜŞÜK",
+    cls: "border-emerald-400/25 bg-emerald-400/10 text-emerald-100",
+  }
+}
+
+function useIsMobile(breakpoint = 768) {
+  const [isMobile, setIsMobile] = useState(false)
+
+  useEffect(() => {
+    const update = () => setIsMobile(window.innerWidth < breakpoint)
+    update()
+    window.addEventListener("resize", update)
+    return () => window.removeEventListener("resize", update)
+  }, [breakpoint])
+
+  return isMobile
 }
 
 /* ================== UI ================== */
-function HeroArt({ theme, onOpen }: { theme: "mint" | "indigo" | "slate"; onOpen?: () => void }) {
+function HeroArt({
+  theme,
+  onOpen,
+}: {
+  theme: "mint" | "indigo" | "slate"
+  onOpen?: () => void
+}) {
   const palette =
     theme === "mint"
       ? { a: "rgba(16,185,129,0.30)", b: "rgba(59,130,246,0.18)", c: "rgba(249,115,22,0.14)" }
@@ -140,44 +171,54 @@ function HeroArt({ theme, onOpen }: { theme: "mint" | "indigo" | "slate"; onOpen
     <button
       type="button"
       onClick={onOpen}
-      className="relative h-full w-full overflow-hidden rounded-[28px] border border-slate-200 bg-white/60 text-left shadow-[0_18px_60px_-35px_rgba(2,6,23,0.55)] backdrop-blur transition hover:-translate-y-0.5 hover:bg-white/70 focus:outline-none focus:ring-4 focus:ring-slate-200/70"
+      className="relative h-full w-full overflow-hidden rounded-[24px] border border-slate-200 bg-white/60 text-left shadow-[0_18px_60px_-35px_rgba(2,6,23,0.55)] backdrop-blur transition hover:-translate-y-0.5 hover:bg-white/70 focus:outline-none focus:ring-4 focus:ring-slate-200/70 sm:rounded-[28px]"
       aria-label="Gündeme git"
     >
       <div className="absolute inset-0 opacity-[0.55] [background-image:linear-gradient(to_right,rgba(2,6,23,0.06)_1px,transparent_1px),linear-gradient(to_bottom,rgba(2,6,23,0.06)_1px,transparent_1px)] [background-size:28px_28px]" />
 
-      <div className="absolute -right-10 -top-10 h-[220px] w-[220px] rounded-[42px] bg-[rgba(99,102,241,0.10)]" />
-      <div className="absolute right-10 top-12 h-[220px] w-[220px] rounded-full" style={{ background: palette.a }} />
-      <div className="absolute right-28 bottom-12 h-[240px] w-[240px] rounded-[56px]" style={{ background: palette.b }} />
-      <div className="absolute -right-24 bottom-[-60px] h-[340px] w-[340px] rounded-full" style={{ background: palette.c }} />
+      <div className="absolute -right-10 -top-10 h-[180px] w-[180px] rounded-[36px] bg-[rgba(99,102,241,0.10)] sm:h-[220px] sm:w-[220px] sm:rounded-[42px]" />
+      <div className="absolute right-6 top-8 h-[160px] w-[160px] rounded-full sm:right-10 sm:top-12 sm:h-[220px] sm:w-[220px]" style={{ background: palette.a }} />
+      <div className="absolute right-10 bottom-10 h-[180px] w-[180px] rounded-[44px] sm:right-28 sm:bottom-12 sm:h-[240px] sm:w-[240px] sm:rounded-[56px]" style={{ background: palette.b }} />
+      <div className="absolute -right-20 bottom-[-50px] h-[240px] w-[240px] rounded-full sm:-right-24 sm:bottom-[-60px] sm:h-[340px] sm:w-[340px]" style={{ background: palette.c }} />
 
-      <div className="absolute left-8 top-8 grid grid-cols-2 gap-4">
-        <div className="flex h-[120px] w-[160px] items-center justify-center rounded-2xl border border-slate-200 bg-white/85 shadow-sm">
+      <div className="absolute left-4 top-4 grid grid-cols-2 gap-3 sm:left-8 sm:top-8 sm:gap-4">
+        <div className="flex h-[92px] w-[126px] items-center justify-center rounded-2xl border border-slate-200 bg-white/85 shadow-sm sm:h-[120px] sm:w-[160px]">
           <div className="text-center">
-            <div className="text-xs text-slate-500">Bugün paylaşılan</div>
-            <div className="mt-1 text-2xl font-extrabold tracking-tight text-slate-950">{formatTR(128)}</div>
+            <div className="text-[11px] text-slate-500 sm:text-xs">Bugün paylaşılan</div>
+            <div className="mt-1 text-xl font-extrabold tracking-tight text-slate-950 sm:text-2xl">
+              {formatTR(128)}
+            </div>
           </div>
         </div>
-        <div className="flex h-[120px] w-[160px] items-center justify-center rounded-2xl border border-slate-200 bg-white/85 shadow-sm">
+        <div className="flex h-[92px] w-[126px] items-center justify-center rounded-2xl border border-slate-200 bg-white/85 shadow-sm sm:h-[120px] sm:w-[160px]">
           <div className="text-center">
-            <div className="text-xs text-slate-500">Toplam paylaşım</div>
-            <div className="mt-1 text-2xl font-extrabold tracking-tight text-slate-950">{formatTR(4202003)}</div>
+            <div className="text-[11px] text-slate-500 sm:text-xs">Toplam paylaşım</div>
+            <div className="mt-1 text-xl font-extrabold tracking-tight text-slate-950 sm:text-2xl">
+              {formatTR(4202003)}
+            </div>
           </div>
         </div>
       </div>
 
-      <div className="absolute left-8 bottom-8 flex items-center gap-3">
-        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-slate-900 font-bold text-white">D</div>
-        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-indigo-600 font-bold text-white">A</div>
-        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-emerald-500 font-bold text-white">M</div>
-        <div className="ml-2 text-sm text-slate-700">
-          <div className="font-semibold">Gündem akıyor</div>
-          <div className="text-xs text-slate-500">Deneyimler görünür oluyor</div>
+      <div className="absolute bottom-4 left-4 flex items-center gap-2 sm:bottom-8 sm:left-8 sm:gap-3">
+        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-900 text-sm font-bold text-white sm:h-12 sm:w-12 sm:text-base">
+          D
+        </div>
+        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-indigo-600 text-sm font-bold text-white sm:h-12 sm:w-12 sm:text-base">
+          A
+        </div>
+        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-500 text-sm font-bold text-white sm:h-12 sm:w-12 sm:text-base">
+          M
+        </div>
+        <div className="ml-1 sm:ml-2">
+          <div className="text-xs font-semibold text-slate-700 sm:text-sm">Gündem akıyor</div>
+          <div className="text-[10px] text-slate-500 sm:text-xs">Deneyimler görünür oluyor</div>
         </div>
       </div>
 
       <div className="pointer-events-none absolute inset-x-0 bottom-0 h-14 bg-gradient-to-t from-white/75 to-transparent" />
-      <div className="absolute bottom-4 right-5 rounded-full border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-900 shadow-sm">
-        Tıkla • Diğer Sorunlarıda gör
+      <div className="absolute bottom-3 right-3 rounded-full border border-slate-200 bg-white px-3 py-2 text-[11px] font-semibold text-slate-900 shadow-sm sm:bottom-4 sm:right-5 sm:px-4 sm:text-xs">
+        Tıkla • Diğer sorunları da gör
       </div>
     </button>
   )
@@ -202,6 +243,7 @@ function PillButton({
       : variant === "secondary"
       ? "bg-emerald-500 text-white shadow-sm hover:bg-emerald-400 focus:ring-emerald-200/70"
       : "border border-white/15 bg-white/10 text-white shadow-sm hover:bg-white/15 focus:ring-white/20"
+
   return (
     <button type="button" onClick={onClick} className={clsx(base, styles)} disabled={disabled}>
       {children}
@@ -209,7 +251,13 @@ function PillButton({
   )
 }
 
-function IconButton({ children, onClick }: { children: React.ReactNode; onClick?: () => void }) {
+function IconButton({
+  children,
+  onClick,
+}: {
+  children: React.ReactNode
+  onClick?: () => void
+}) {
   return (
     <button
       type="button"
@@ -241,15 +289,15 @@ function CategoryDropdown({
   }, [])
 
   return (
-    <div ref={ref} className="relative">
+    <div ref={ref} className="relative w-full sm:w-auto">
       <div className="mb-1 text-[11px] font-light text-white/60">Kategoriler</div>
       <button
         type="button"
         onClick={() => setOpen((s) => !s)}
-        className="flex h-[46px] min-w-[240px] items-center justify-between gap-2 rounded-2xl border border-white/10 bg-white/10 px-4 text-sm text-white shadow-sm backdrop-blur hover:bg-white/15 focus:outline-none focus:ring-4 focus:ring-white/20"
+        className="flex h-[46px] w-full min-w-0 items-center justify-between gap-2 rounded-2xl border border-white/10 bg-white/10 px-4 text-sm text-white shadow-sm backdrop-blur hover:bg-white/15 focus:outline-none focus:ring-4 focus:ring-white/20 sm:min-w-[240px]"
       >
         <span className="truncate">{value}</span>
-        <ChevronDown className={clsx("h-4 w-4 text-white/70 transition", open && "rotate-180")} />
+        <ChevronDown className={clsx("h-4 w-4 shrink-0 text-white/70 transition", open && "rotate-180")} />
       </button>
 
       {open ? (
@@ -265,7 +313,7 @@ function CategoryDropdown({
                 }}
                 className={clsx(
                   "w-full rounded-xl px-3 py-2 text-left text-sm",
-                  opt === value ? "bg-white/10 text-white" : "hover:bg-white/5 text-white/85"
+                  opt === value ? "bg-white/10 text-white" : "text-white/85 hover:bg-white/5"
                 )}
               >
                 {opt}
@@ -281,6 +329,7 @@ function CategoryDropdown({
 /* ================== PAGE ================== */
 export default function Page() {
   const router = useRouter()
+  const isMobile = useIsMobile()
 
   const goWrite = () => router.push("/sikayet-yaz")
   const goList = () => router.push("/sikayetler")
@@ -296,7 +345,6 @@ export default function Page() {
   const [category, setCategory] = useState<Category | "Tümü">("Tümü")
   const [query, setQuery] = useState("")
 
-  // hero slider
   const [heroIndex, setHeroIndex] = useState(0)
   const heroTrackRef = useRef<HTMLDivElement | null>(null)
   const dragRef = useRef({ isDown: false, startX: 0, deltaX: 0, pointerId: -1 })
@@ -488,6 +536,7 @@ export default function Page() {
     const idx = (next + HERO_SLIDES.length) % HERO_SLIDES.length
     setHeroIndex(idx)
   }
+
   const heroSlide = HERO_SLIDES[heroIndex]
 
   const onHeroPointerDown = (e: React.PointerEvent) => {
@@ -502,10 +551,12 @@ export default function Page() {
   const onHeroPointerMove = (e: React.PointerEvent) => {
     if (!dragRef.current.isDown) return
     if (dragRef.current.pointerId !== e.pointerId) return
+
     dragRef.current.deltaX = e.clientX - dragRef.current.startX
 
     const el = heroTrackRef.current
     if (!el) return
+
     const dx = dragRef.current.deltaX
     el.style.transition = "none"
     el.style.transform = `translateX(calc(${-heroIndex * 100}% + ${dx}px))`
@@ -543,10 +594,14 @@ export default function Page() {
         e.preventDefault()
         router.push("/sikayet-yaz")
       }
+
+      if (e.key === "ArrowLeft") goHero(heroIndex - 1)
+      if (e.key === "ArrowRight") goHero(heroIndex + 1)
     }
+
     window.addEventListener("keydown", onKey)
     return () => window.removeEventListener("keydown", onKey)
-  }, [router])
+  }, [router, heroIndex])
 
   const searchToList = () => {
     const q = query.trim()
@@ -558,15 +613,26 @@ export default function Page() {
   }
 
   return (
-    <div className="relative min-h-screen bg-[#0B1020] text-slate-100">
+    <div className="relative min-h-screen overflow-x-hidden bg-[#0B1020] text-slate-100">
       <style jsx global>{`
         @keyframes floaty {
-          0% { transform: translateY(0px); }
-          50% { transform: translateY(-10px); }
-          100% { transform: translateY(0px); }
+          0% {
+            transform: translateY(0px);
+          }
+          50% {
+            transform: translateY(-10px);
+          }
+          100% {
+            transform: translateY(0px);
+          }
         }
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .no-scrollbar::-webkit-scrollbar {
+          display: none;
+        }
+        .no-scrollbar {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
       `}</style>
 
       <div className="pointer-events-none fixed inset-0 -z-10">
@@ -584,61 +650,60 @@ export default function Page() {
         <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/60" />
       </div>
 
-      <PublicTopbar
-        subtitle="Sorunlar"
-        showSearchStub={false}
-        nextUrlForAuth="/sikayetler"
-      />
+      <PublicTopbar subtitle="Sorunlar" showSearchStub={false} nextUrlForAuth="/sikayetler" />
 
       <div className="border-b border-white/10 bg-[#1F2333] text-white">
-        <div className="mx-auto flex w-full max-w-screen-2xl items-center justify-between gap-3 px-4 py-2.5 sm:px-6 lg:px-10 2xl:px-14">
+        <div className="mx-auto flex w-full max-w-screen-2xl flex-col gap-1 px-4 py-2.5 sm:flex-row sm:items-center sm:justify-between sm:gap-3 sm:px-6 lg:px-10 2xl:px-14">
           <div className="text-sm">
             Toplam paylaşım{" "}
             <span className="ml-2 text-lg font-extrabold text-emerald-300">{formatTR(totalCount)}</span>
           </div>
-          <div className="hidden items-center gap-2 text-sm text-white/80 sm:flex">
+          <div className="flex items-center gap-2 text-sm text-white/80">
             Bugün: <span className="font-semibold text-white">{formatTR(todayCount)}</span>
           </div>
         </div>
       </div>
 
       <main className="mx-auto w-full max-w-screen-2xl px-4 pb-16 sm:px-6 lg:px-10 2xl:px-14">
-        <section className="pt-8 md:pt-10">
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-12 md:gap-10">
-            <div className="md:col-span-5">
-              <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/10 px-3 py-1.5 text-[12px] text-white/85 shadow-sm backdrop-blur">
+        <section className="pt-6 md:pt-10">
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-12 md:gap-10">
+            <div className="order-2 md:order-1 md:col-span-5">
+              <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/10 px-3 py-1.5 text-[11px] text-white/85 shadow-sm backdrop-blur sm:text-[12px]">
                 <span className="h-2 w-2 rounded-full bg-emerald-400" />
                 {heroSlide.eyebrow}
               </div>
 
-              <h1 className="mt-5 text-[40px] font-extrabold leading-[1.05] tracking-tight text-white md:text-[54px]">
+              <h1 className="mt-4 text-[32px] font-extrabold leading-[1.05] tracking-tight text-white sm:text-[40px] md:mt-5 md:text-[54px]">
                 {heroSlide.titleA}
                 <span className="block">{heroSlide.titleB}</span>
               </h1>
 
-              <p className="mt-4 max-w-xl text-base leading-relaxed text-white/70 md:text-lg">{heroSlide.desc}</p>
+              <p className="mt-4 max-w-xl text-sm leading-relaxed text-white/70 sm:text-base md:text-lg">
+                {heroSlide.desc}
+              </p>
 
-              <div className="mt-4 flex flex-wrap gap-3">
+              <div className="mt-4">
                 <CategoryDropdown value={category} onChange={setCategory} />
               </div>
 
-              <div className="mt-6">
-                <div className="flex items-center overflow-hidden rounded-full border border-white/10 bg-white/10 shadow-sm backdrop-blur">
-                  <div className="flex items-center gap-2 px-4 text-white/70">
-                    <Search className="h-4 w-4" />
+              <div className="mt-5">
+                <div className="flex flex-col gap-3 rounded-[24px] border border-white/10 bg-white/10 p-2 shadow-sm backdrop-blur sm:flex-row sm:items-center sm:overflow-hidden sm:rounded-full sm:p-0">
+                  <div className="flex min-w-0 flex-1 items-center gap-2 px-3 sm:px-4 text-white/70">
+                    <Search className="h-4 w-4 shrink-0" />
+                    <input
+                      value={query}
+                      onChange={(e) => setQuery(e.target.value)}
+                      placeholder="Kategori, konu, problem ara…"
+                      className="h-[46px] w-full bg-transparent text-sm text-white placeholder:text-white/45 focus:outline-none sm:h-[52px]"
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") searchToList()
+                      }}
+                    />
                   </div>
-                  <input
-                    value={query}
-                    onChange={(e) => setQuery(e.target.value)}
-                    placeholder="Kategori, konu, problem ara…"
-                    className="h-[52px] w-full bg-transparent pr-3 text-sm text-white placeholder:text-white/45 focus:outline-none"
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") searchToList()
-                    }}
-                  />
+
                   <button
                     type="button"
-                    className="m-1.5 rounded-full bg-emerald-500 px-6 py-3 text-sm font-semibold text-white hover:bg-emerald-400 focus:outline-none focus:ring-4 focus:ring-emerald-200/70"
+                    className="rounded-full bg-emerald-500 px-6 py-3 text-sm font-semibold text-white hover:bg-emerald-400 focus:outline-none focus:ring-4 focus:ring-emerald-200/70 sm:m-1.5"
                     onClick={searchToList}
                   >
                     Ara
@@ -693,9 +758,9 @@ export default function Page() {
               </div>
             </div>
 
-            <div className="md:col-span-7">
+            <div className="order-1 md:order-2 md:col-span-7">
               <div
-                className="relative h-[380px] overflow-hidden md:h-[460px]"
+                className="relative h-[300px] overflow-hidden sm:h-[360px] md:h-[460px]"
                 onPointerDown={onHeroPointerDown}
                 onPointerMove={onHeroPointerMove}
                 onPointerUp={onHeroPointerUpOrCancel}
@@ -712,27 +777,29 @@ export default function Page() {
                   }}
                 >
                   {HERO_SLIDES.map((s, i) => (
-                    <div key={i} className="h-full w-full shrink-0 px-0">
+                    <div key={i} className="h-full w-full shrink-0">
                       <HeroArt theme={s.theme} onOpen={goList} />
                     </div>
                   ))}
                 </div>
 
-                <div className="pointer-events-none absolute inset-y-0 left-0 w-10 bg-gradient-to-r from-[#0B1020] to-transparent" />
-                <div className="pointer-events-none absolute inset-y-0 right-0 w-10 bg-gradient-to-l from-[#0B1020] to-transparent" />
+                <div className="pointer-events-none absolute inset-y-0 left-0 w-8 bg-gradient-to-r from-[#0B1020] to-transparent sm:w-10" />
+                <div className="pointer-events-none absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-[#0B1020] to-transparent sm:w-10" />
               </div>
             </div>
           </div>
         </section>
 
-        <section id="gundem" className="relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] mt-14 w-screen py-12">
+        <section id="gundem" className="relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] mt-12 w-screen py-12 sm:mt-14">
           <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-[#0B1020] to-transparent" />
           <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-[#0B1020] to-transparent" />
 
           <div className="mx-auto w-full max-w-screen-2xl px-4 sm:px-6 lg:px-10 2xl:px-14">
-            <div className="flex items-end justify-between gap-3">
+            <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
               <div>
-                <h2 className="text-[30px] font-semibold tracking-tight text-white">Gündemdeki Yaşanan Sorunlar</h2>
+                <h2 className="text-[26px] font-semibold tracking-tight text-white sm:text-[30px]">
+                  Gündemdeki Yaşanan Sorunlar
+                </h2>
                 <p className="mt-1 text-sm text-white/65">
                   Toplulukta en çok konuşulan başlıklar — premium curved görünümle.
                 </p>
@@ -765,7 +832,11 @@ export default function Page() {
                   <TrendingUp className="h-4 w-4 text-indigo-300" />
                   Güncel nabız
                 </div>
-                <h3 className="mt-4 text-[34px] font-semibold tracking-tight text-white">Çok konuşulanlar</h3>
+
+                <h3 className="mt-4 text-[28px] font-semibold tracking-tight text-white sm:text-[34px]">
+                  Çok konuşulanlar
+                </h3>
+
                 <p className="mt-2 text-sm leading-relaxed text-white/70">
                   En hızlı etkileşim alan başlıklar. Kategori bazlı — güvenli paylaşım.
                 </p>
@@ -793,20 +864,25 @@ export default function Page() {
                     onClick={goList}
                     className="w-full rounded-full bg-white px-5 py-3 text-sm font-semibold text-black shadow-sm hover:bg-white/90"
                   >
-                    Yaşanan Sorunları gör
+                    Yaşanan Sorunları Gör
                   </button>
                 </div>
               </div>
 
               <div className="lg:col-span-8">
-                <TalkedRail items={talked} onWrite={goWrite} onOpen={(id) => goDetail(id)} />
+                <TalkedRail
+                  items={talked}
+                  onWrite={goWrite}
+                  onOpen={(id) => goDetail(id)}
+                  onGuide={goGuide}
+                />
               </div>
             </div>
           </div>
         </section>
       </main>
 
-      <section className="relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] w-screen bg-[#0B1020] py-16 text-white">
+      <section className="relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] w-screen bg-[#0B1020] py-14 text-white sm:py-16">
         <div className="pointer-events-none absolute inset-0 opacity-60 [background-image:radial-gradient(circle_at_20%_20%,rgba(99,102,241,0.25),transparent_45%),radial-gradient(circle_at_80%_30%,rgba(16,185,129,0.20),transparent_40%),radial-gradient(circle_at_50%_90%,rgba(249,115,22,0.16),transparent_45%)]" />
         <div className="pointer-events-none absolute inset-0 opacity-[0.35] [background-image:linear-gradient(to_right,rgba(255,255,255,0.07)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.07)_1px,transparent_1px)] [background-size:32px_32px]" />
 
@@ -817,13 +893,15 @@ export default function Page() {
                 <span className="h-2 w-2 rounded-full bg-emerald-400" />
                 Sayılarla Deneyim
               </div>
-              <h3 className="mt-4 text-[38px] font-semibold tracking-tight">Güvenin ölçülebilir hali</h3>
+              <h3 className="mt-4 text-[30px] font-semibold tracking-tight sm:text-[38px]">
+                Güvenin ölçülebilir hali
+              </h3>
               <p className="mt-2 max-w-2xl text-sm leading-relaxed text-white/75">
-                Topluluğun nabzını metriklerle takip et. Detaylar SOrunlar listesinde.
+                Topluluğun nabzını metriklerle takip et. Detaylar sorunlar listesinde.
               </p>
             </div>
 
-            <div className="flex items-center gap-3">
+            <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center">
               <PillButton variant="ghost" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>
                 Yukarı Çık
               </PillButton>
@@ -872,7 +950,7 @@ export default function Page() {
                   <span className="h-2 w-2 rounded-full bg-indigo-300" />
                   Son Eklenen Deneyimler
                 </div>
-                <h4 className="mt-3 text-[28px] font-semibold tracking-tight">
+                <h4 className="mt-3 text-[24px] font-semibold tracking-tight sm:text-[28px]">
                   Canlı akış hissi veren{" "}
                   <span className="bg-[linear-gradient(90deg,rgba(99,102,241,1),rgba(16,185,129,1),rgba(249,115,22,1))] bg-clip-text text-transparent">
                     premium feed
@@ -913,16 +991,16 @@ export default function Page() {
               </div>
 
               <div className="lg:col-span-7">
-                <div className="relative overflow-hidden rounded-[30px] border border-white/10 bg-white/5 p-3 shadow-[0_30px_110px_-80px_rgba(0,0,0,0.85)] backdrop-blur">
+                <div className="relative overflow-hidden rounded-[26px] border border-white/10 bg-white/5 p-3 shadow-[0_30px_110px_-80px_rgba(0,0,0,0.85)] backdrop-blur sm:rounded-[30px]">
                   <div className="pointer-events-none absolute inset-0 opacity-60 [background-image:radial-gradient(circle_at_10%_10%,rgba(99,102,241,0.22),transparent_45%),radial-gradient(circle_at_90%_25%,rgba(16,185,129,0.18),transparent_45%),radial-gradient(circle_at_50%_110%,rgba(249,115,22,0.12),transparent_50%)]" />
                   <div className="pointer-events-none absolute inset-0 opacity-[0.22] [background-image:linear-gradient(to_right,rgba(255,255,255,0.08)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.08)_1px,transparent_1px)] [background-size:26px_26px]" />
 
-                  <div className="relative flex items-center justify-between px-4 py-3">
+                  <div className="relative flex items-center justify-between px-3 py-3 sm:px-4">
                     <div className="text-sm font-semibold text-white/90">Akış</div>
                     <div className="text-xs text-white/60">güncel</div>
                   </div>
 
-                  <div className="relative space-y-3 p-2">
+                  <div className="relative space-y-3 p-1 sm:p-2">
                     {experiences.slice(1).map((it) => (
                       <ExperienceRow key={it.id} item={it} onOpen={() => goDetail(it.id)} />
                     ))}
@@ -955,19 +1033,20 @@ function CurvedTrendingCarousel({
   const [active, setActive] = useState(0)
   const [isPaused, setIsPaused] = useState(false)
   const touchStartX = useRef<number | null>(null)
+  const isMobile = useIsMobile()
   const total = items.length
 
   const goNext = () => setActive((prev) => (prev + 1) % total)
   const goPrev = () => setActive((prev) => (prev - 1 + total) % total)
 
   useEffect(() => {
-    if (isPaused || total <= 1) return
+    if (isPaused || total <= 1 || isMobile) return
     const timer = window.setInterval(() => {
       setActive((prev) => (prev + 1) % total)
     }, 3200)
 
     return () => window.clearInterval(timer)
-  }, [isPaused, total])
+  }, [isPaused, total, isMobile])
 
   const getOffset = (index: number) => {
     let diff = index - active
@@ -994,6 +1073,44 @@ function CurvedTrendingCarousel({
     touchStartX.current = null
   }
 
+  if (isMobile) {
+    return (
+      <div className="relative overflow-hidden rounded-[28px] border border-white/10 bg-white/[0.04] p-4 shadow-[0_35px_120px_-90px_rgba(0,0,0,0.9)] backdrop-blur">
+        <div className="pointer-events-none absolute inset-0 opacity-70 [background-image:radial-gradient(circle_at_20%_10%,rgba(99,102,241,0.22),transparent_42%),radial-gradient(circle_at_85%_30%,rgba(16,185,129,0.16),transparent_40%),radial-gradient(circle_at_50%_100%,rgba(249,115,22,0.12),transparent_45%)]" />
+
+        <div className="relative mb-4 flex items-center justify-between">
+          <div className="text-sm font-semibold text-white/90">Gündemde öne çıkan başlıklar</div>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={goPrev}
+              className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/10 bg-white/10 text-white/80 backdrop-blur transition hover:bg-white/15"
+              aria-label="Önceki"
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </button>
+            <button
+              type="button"
+              onClick={goNext}
+              className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/10 bg-white/10 text-white/80 backdrop-blur transition hover:bg-white/15"
+              aria-label="Sonraki"
+            >
+              <ChevronRight className="h-4 w-4" />
+            </button>
+          </div>
+        </div>
+
+        <div className="relative -mx-1 flex snap-x snap-mandatory gap-4 overflow-x-auto px-1 no-scrollbar">
+          {items.map((item) => (
+            <div key={item.id} className="min-w-[86%] snap-center">
+              <CurvedTrendingCard item={item} active={true} onOpen={() => onOpen(item.id)} />
+            </div>
+          ))}
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div
       className="relative overflow-hidden rounded-[34px] border border-white/10 bg-white/[0.04] px-3 py-8 shadow-[0_35px_120px_-90px_rgba(0,0,0,0.9)] backdrop-blur md:px-6 md:py-10"
@@ -1007,9 +1124,7 @@ function CurvedTrendingCarousel({
       <div className="pointer-events-none absolute left-1/2 top-1/2 h-[260px] w-[260px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-indigo-500/10 blur-3xl" />
 
       <div className="relative mb-6 flex items-center justify-between px-2 md:px-4">
-        <div>
-          <div className="mt-1 text-sm font-semibold text-white/90">Gündemde öne çıkan başlıklar</div>
-        </div>
+        <div className="mt-1 text-sm font-semibold text-white/90">Gündemde öne çıkan başlıklar</div>
 
         <div className="flex items-center gap-2">
           <button
@@ -1055,45 +1170,19 @@ function CurvedTrendingCarousel({
               : "142%"
 
           const translateY =
-            offset === 0
-              ? "0px"
-              : abs === 1
-              ? "34px"
-              : abs === 2
-              ? "72px"
-              : "96px"
+            offset === 0 ? "0px" : abs === 1 ? "34px" : abs === 2 ? "72px" : "96px"
 
           const rotate =
-            offset === 0
-              ? "0deg"
-              : offset < 0
-              ? `${Math.min(abs * 7, 16)}deg`
-              : `${-Math.min(abs * 7, 16)}deg`
+            offset === 0 ? "0deg" : offset < 0 ? `${Math.min(abs * 7, 16)}deg` : `${-Math.min(abs * 7, 16)}deg`
 
-          const scale =
-            offset === 0
-              ? 1
-              : abs === 1
-              ? 0.88
-              : abs === 2
-              ? 0.76
-              : 0.66
-
-          const opacity =
-            offset === 0
-              ? 1
-              : abs === 1
-              ? 0.82
-              : abs === 2
-              ? 0.45
-              : 0.2
-
+          const scale = offset === 0 ? 1 : abs === 1 ? 0.88 : abs === 2 ? 0.76 : 0.66
+          const opacity = offset === 0 ? 1 : abs === 1 ? 0.82 : abs === 2 ? 0.45 : 0.2
           const zIndex = 50 - abs
 
           return (
             <div
               key={item.id}
-              className="absolute left-1/2 top-4 w-[84vw] max-w-[430px] -translate-x-1/2 transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] md:w-[430px]"
+              className="absolute left-1/2 top-4 w-[84vw] max-w-[430px] -translate-x-1/2 transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]"
               style={{
                 transform: `translateX(${translateX}) translateY(${translateY}) rotate(${rotate}) scale(${scale})`,
                 opacity,
@@ -1139,43 +1228,41 @@ function CurvedTrendingCard({
       type="button"
       onClick={onOpen}
       className={clsx(
-        "group w-full overflow-hidden rounded-[30px] border text-left shadow-[0_30px_90px_-50px_rgba(0,0,0,0.75)] transition",
-        active
-          ? "border-white/15 bg-white text-slate-950"
-          : "border-white/10 bg-white/90 text-slate-950"
+        "group w-full overflow-hidden rounded-[26px] border text-left shadow-[0_30px_90px_-50px_rgba(0,0,0,0.75)] transition sm:rounded-[30px]",
+        active ? "border-white/15 bg-white text-slate-950" : "border-white/10 bg-white/90 text-slate-950"
       )}
     >
-      <div className="relative p-6">
+      <div className="relative p-5 sm:p-6">
         <div className="absolute inset-0 opacity-[0.10] [background-image:radial-gradient(circle_at_20%_20%,rgba(99,102,241,0.55),transparent_38%),radial-gradient(circle_at_80%_30%,rgba(16,185,129,0.45),transparent_35%),radial-gradient(circle_at_50%_100%,rgba(249,115,22,0.32),transparent_42%)]" />
 
         <div className="relative flex items-start justify-between gap-3">
-          <div className="flex items-center gap-3">
-            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-slate-900 text-base font-extrabold text-white">
+          <div className="flex min-w-0 items-center gap-3">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-slate-900 text-sm font-extrabold text-white sm:h-12 sm:w-12 sm:text-base">
               {item.avatarLetter}
             </div>
 
-            <div>
-              <div className="text-sm font-semibold text-slate-900">{item.userName}</div>
-              <div className="mt-1 inline-flex items-center rounded-full bg-indigo-50 px-2.5 py-1 text-[11px] font-semibold text-indigo-700">
-                {item.category}
+            <div className="min-w-0">
+              <div className="truncate text-sm font-semibold text-slate-900">{item.userName}</div>
+              <div className="mt-1 inline-flex max-w-full items-center rounded-full bg-indigo-50 px-2.5 py-1 text-[11px] font-semibold text-indigo-700">
+                <span className="truncate">{item.category}</span>
               </div>
             </div>
           </div>
 
           {item.hasImage ? (
-            <div className="h-14 w-14 overflow-hidden rounded-2xl border border-slate-200 bg-slate-100">
+            <div className="h-12 w-12 shrink-0 overflow-hidden rounded-2xl border border-slate-200 bg-slate-100 sm:h-14 sm:w-14">
               <div className="h-full w-full bg-[linear-gradient(135deg,rgba(99,102,241,0.20),rgba(16,185,129,0.18),rgba(249,115,22,0.14))]" />
             </div>
           ) : (
-            <div className="h-14 w-14 rounded-2xl border border-slate-200 bg-slate-50" />
+            <div className="h-12 w-12 shrink-0 rounded-2xl border border-slate-200 bg-slate-50 sm:h-14 sm:w-14" />
           )}
         </div>
 
-        <div className="relative mt-5 line-clamp-3 text-[20px] font-extrabold leading-snug tracking-tight text-slate-950">
+        <div className="relative mt-5 line-clamp-3 text-[18px] font-extrabold leading-snug tracking-tight text-slate-950 sm:text-[20px]">
           {item.title}
         </div>
 
-        <div className="relative mt-5 flex items-center justify-between gap-3">
+        <div className="relative mt-5 flex flex-wrap items-center justify-between gap-3">
           <div className="flex flex-wrap items-center gap-3 text-[13px] text-slate-600">
             <span className="inline-flex items-center gap-1.5">
               <Eye className="h-4 w-4" />
@@ -1203,13 +1290,15 @@ function TalkedRail({
   items,
   onWrite,
   onOpen,
+  onGuide,
 }: {
   items: TalkCard[]
   onWrite: () => void
   onOpen: (id: string) => void
+  onGuide: () => void
 }) {
   return (
-    <div className="relative overflow-hidden rounded-[34px] border border-white/10 bg-white/10 p-6 shadow-[0_30px_90px_-55px_rgba(0,0,0,0.65)] backdrop-blur">
+    <div className="relative overflow-hidden rounded-[28px] border border-white/10 bg-white/10 p-4 shadow-[0_30px_90px_-55px_rgba(0,0,0,0.65)] backdrop-blur sm:rounded-[34px] sm:p-6">
       <div className="pointer-events-none absolute inset-0 opacity-70 [background-image:radial-gradient(circle_at_20%_10%,rgba(99,102,241,0.18),transparent_42%),radial-gradient(circle_at_85%_30%,rgba(16,185,129,0.14),transparent_40%),radial-gradient(circle_at_50%_100%,rgba(249,115,22,0.10),transparent_45%)]" />
       <div className="pointer-events-none absolute inset-0 opacity-[0.25] [background-image:linear-gradient(to_right,rgba(255,255,255,0.08)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.08)_1px,transparent_1px)] [background-size:26px_26px]" />
 
@@ -1231,30 +1320,30 @@ function TalkedRail({
           ))}
 
           <div className="md:col-span-2">
-            <div className="h-full rounded-[28px] border border-white/10 bg-white/5 p-6 backdrop-blur">
+            <div className="h-full rounded-[24px] border border-white/10 bg-white/5 p-5 backdrop-blur sm:rounded-[28px] sm:p-6">
               <div className="flex items-start justify-between gap-3">
                 <div>
                   <div className="text-sm font-semibold text-white/90">Hızlı ipuçları</div>
                   <div className="mt-1 text-xs text-white/60">İçerik kalitesi için mini rehber</div>
                 </div>
-                <div className="h-10 w-10 rounded-2xl bg-white/10" />
+                <div className="h-10 w-10 shrink-0 rounded-2xl bg-white/10" />
               </div>
 
               <ul className="mt-4 space-y-3 text-sm text-white/75">
                 <li className="flex items-start gap-2">
-                  <span className="mt-1 inline-flex h-5 w-5 items-center justify-center rounded-full bg-emerald-500/15 text-emerald-200">
+                  <span className="mt-1 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-500/15 text-emerald-200">
                     ✓
                   </span>
                   Somut detay: tarih, süreç, sonuç.
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="mt-1 inline-flex h-5 w-5 items-center justify-center rounded-full bg-indigo-500/15 text-indigo-200">
+                  <span className="mt-1 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-indigo-500/15 text-indigo-200">
                     ✓
                   </span>
                   Kişisel veri paylaşma.
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="mt-1 inline-flex h-5 w-5 items-center justify-center rounded-full bg-orange-500/15 text-orange-200">
+                  <span className="mt-1 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-orange-500/15 text-orange-200">
                     ✓
                   </span>
                   Hakaret yerine çözüm odaklı ol.
@@ -1264,7 +1353,7 @@ function TalkedRail({
               <div className="mt-6 flex flex-wrap items-center gap-3">
                 <button
                   type="button"
-                  onClick={() => onOpen("rehber")}
+                  onClick={onGuide}
                   className="rounded-full border border-white/10 bg-white/10 px-4 py-2 text-sm font-semibold text-white/85 hover:bg-white/15"
                 >
                   Rehber
@@ -1274,7 +1363,7 @@ function TalkedRail({
                   onClick={onWrite}
                   className="rounded-full bg-emerald-500 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-400"
                 >
-                  Sorunlar Yaz
+                  Sorun Yaz
                 </button>
               </div>
             </div>
@@ -1300,30 +1389,30 @@ function BigTalkCard({ item, onOpen }: { item: TalkCard; onOpen: () => void }) {
     <button
       type="button"
       onClick={onOpen}
-      className="group relative overflow-hidden rounded-[30px] border border-white/10 bg-white/95 p-6 text-left shadow-sm transition hover:-translate-y-0.5 hover:shadow-[0_24px_70px_-45px_rgba(0,0,0,0.55)]"
+      className="group relative overflow-hidden rounded-[24px] border border-white/10 bg-white/95 p-5 text-left shadow-sm transition hover:-translate-y-0.5 hover:shadow-[0_24px_70px_-45px_rgba(0,0,0,0.55)] sm:rounded-[30px] sm:p-6"
     >
       <div className={clsx("pointer-events-none absolute inset-0 opacity-10 bg-gradient-to-br", tone)} />
       <div className="pointer-events-none absolute -right-14 -bottom-14 h-44 w-44 rounded-full bg-black/5" />
 
       <div className="relative flex items-start justify-between gap-3">
-        <div className="flex items-center gap-3">
-          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-slate-900 font-extrabold text-white">
+        <div className="flex min-w-0 items-center gap-3">
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-slate-900 font-extrabold text-white sm:h-12 sm:w-12">
             {item.avatarLetter}
           </div>
-          <div>
-            <div className="text-sm font-semibold text-slate-900">{item.userName}</div>
-            <div className="mt-1 text-xs text-slate-500">{item.brandHint}</div>
+          <div className="min-w-0">
+            <div className="truncate text-sm font-semibold text-slate-900">{item.userName}</div>
+            <div className="mt-1 truncate text-xs text-slate-500">{item.brandHint}</div>
           </div>
         </div>
 
-        <div className="flex items-center gap-4 text-xs text-slate-600">
+        <div className="flex shrink-0 items-center gap-4 text-xs text-slate-600">
           <span className="inline-flex items-center gap-1">
             <MessageSquare className="h-4 w-4" /> {formatTR(item.comments)} yorum
           </span>
         </div>
       </div>
 
-      <div className="relative mt-5 line-clamp-3 text-[22px] font-semibold leading-snug tracking-tight text-slate-900">
+      <div className="relative mt-5 line-clamp-3 text-[18px] font-semibold leading-snug tracking-tight text-slate-900 sm:text-[22px]">
         {item.title}
       </div>
 
@@ -1344,24 +1433,24 @@ function SmallTalkCard({ item, onOpen }: { item: TalkCard; onOpen: () => void })
     <button
       type="button"
       onClick={onOpen}
-      className="group h-full rounded-[28px] border border-white/10 bg-white/90 p-6 text-left shadow-sm transition hover:-translate-y-0.5 hover:bg-white"
+      className="group h-full rounded-[24px] border border-white/10 bg-white/90 p-5 text-left shadow-sm transition hover:-translate-y-0.5 hover:bg-white sm:rounded-[28px] sm:p-6"
     >
       <div className="flex items-start justify-between gap-3">
-        <div className="flex items-center gap-3">
-          <div className="flex h-11 w-11 items-center justify-center rounded-full bg-slate-900 font-extrabold text-white">
+        <div className="flex min-w-0 items-center gap-3">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-slate-900 font-extrabold text-white sm:h-11 sm:w-11">
             {item.avatarLetter}
           </div>
-          <div>
-            <div className="text-sm font-semibold text-slate-900">{item.userName}</div>
-            <div className="mt-1 text-xs text-slate-500">{item.brandHint}</div>
+          <div className="min-w-0">
+            <div className="truncate text-sm font-semibold text-slate-900">{item.userName}</div>
+            <div className="mt-1 truncate text-xs text-slate-500">{item.brandHint}</div>
           </div>
         </div>
-        <div className="h-12 w-12 rounded-2xl border border-slate-200 bg-[linear-gradient(135deg,rgba(99,102,241,0.16),rgba(16,185,129,0.14),rgba(249,115,22,0.10))]" />
+        <div className="h-12 w-12 shrink-0 rounded-2xl border border-slate-200 bg-[linear-gradient(135deg,rgba(99,102,241,0.16),rgba(16,185,129,0.14),rgba(249,115,22,0.10))]" />
       </div>
 
       <div className="mt-4 line-clamp-3 text-base font-semibold leading-snug text-slate-900">{item.title}</div>
 
-      <div className="mt-4 flex items-center justify-between text-xs text-slate-600">
+      <div className="mt-4 flex flex-wrap items-center justify-between gap-2 text-xs text-slate-600">
         <span className="inline-flex items-center gap-1.5">
           <MessageSquare className="h-4 w-4" /> {formatTR(item.comments)} yorum
         </span>
@@ -1412,7 +1501,7 @@ function StatTile({
       type="button"
       onClick={onOpen}
       className={clsx(
-        "relative overflow-hidden rounded-[26px] border border-white/10 bg-white/5 p-5 text-left shadow-sm ring-1 transition hover:-translate-y-0.5 hover:bg-white/7 focus:outline-none focus:ring-4 focus:ring-white/15",
+        "relative overflow-hidden rounded-[24px] border border-white/10 bg-white/5 p-5 text-left shadow-sm ring-1 transition hover:-translate-y-0.5 hover:bg-white/7 focus:outline-none focus:ring-4 focus:ring-white/15 sm:rounded-[26px]",
         ring
       )}
       aria-label={`${label} detayına git`}
@@ -1432,7 +1521,7 @@ function StatTile({
       </div>
 
       <div className="relative mt-5 text-xs text-white/70">{label}</div>
-      <div className="relative mt-1 text-[26px] font-extrabold tracking-tight">
+      <div className="relative mt-1 text-[24px] font-extrabold tracking-tight sm:text-[26px]">
         {value}
         {suffix ? <span className="text-white/80">{suffix}</span> : null}
       </div>
@@ -1443,26 +1532,33 @@ function StatTile({
 }
 
 /* ================== EXPERIENCE FEED ================== */
-function FeaturedExperienceCard({ item, onOpen }: { item: ExperienceItem; onOpen: () => void }) {
+function FeaturedExperienceCard({
+  item,
+  onOpen,
+}: {
+  item: ExperienceItem
+  onOpen: () => void
+}) {
   const sev = severityUI(item.severity)
+
   return (
     <button
       type="button"
       onClick={onOpen}
-      className="group relative h-full w-full overflow-hidden rounded-[34px] border border-white/10 bg-white/5 p-7 text-left shadow-[0_35px_120px_-90px_rgba(0,0,0,0.85)] backdrop-blur transition hover:-translate-y-0.5 hover:bg-white/7"
+      className="group relative h-full w-full overflow-hidden rounded-[28px] border border-white/10 bg-white/5 p-5 text-left shadow-[0_35px_120px_-90px_rgba(0,0,0,0.85)] backdrop-blur transition hover:-translate-y-0.5 hover:bg-white/7 sm:rounded-[34px] sm:p-7"
     >
       <div className="pointer-events-none absolute inset-0 opacity-70 [background-image:radial-gradient(circle_at_15%_15%,rgba(99,102,241,0.30),transparent_50%),radial-gradient(circle_at_85%_35%,rgba(16,185,129,0.22),transparent_55%),radial-gradient(circle_at_50%_120%,rgba(249,115,22,0.18),transparent_55%)]" />
       <div className="pointer-events-none absolute inset-0 opacity-[0.25] [background-image:linear-gradient(to_right,rgba(255,255,255,0.08)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.08)_1px,transparent_1px)] [background-size:28px_28px]" />
 
       <div className="relative flex items-start justify-between gap-3">
-        <div className="flex items-center gap-3">
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/10 ring-1 ring-white/10">
+        <div className="flex min-w-0 items-center gap-3">
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-white/10 ring-1 ring-white/10 sm:h-12 sm:w-12">
             <span className="text-sm font-extrabold text-white/90">{item.category.slice(0, 1)}</span>
           </div>
-          <div>
+          <div className="min-w-0">
             <div className="text-xs text-white/60">{item.timeAgo}</div>
-            <div className="mt-1 inline-flex items-center rounded-full border border-white/10 bg-white/10 px-2.5 py-1 text-[11px] font-semibold text-white/85">
-              {item.category}
+            <div className="mt-1 inline-flex max-w-full items-center rounded-full border border-white/10 bg-white/10 px-2.5 py-1 text-[11px] font-semibold text-white/85">
+              <span className="truncate">{item.category}</span>
             </div>
           </div>
         </div>
@@ -1472,11 +1568,13 @@ function FeaturedExperienceCard({ item, onOpen }: { item: ExperienceItem; onOpen
         </div>
       </div>
 
-      <div className="relative mt-5 text-[22px] font-semibold leading-snug tracking-tight text-white">{item.title}</div>
+      <div className="relative mt-5 text-[19px] font-semibold leading-snug tracking-tight text-white sm:text-[22px]">
+        {item.title}
+      </div>
       <div className="relative mt-3 line-clamp-4 text-sm leading-relaxed text-white/70">{item.excerpt}</div>
 
       <div className="relative mt-6 flex flex-wrap items-center justify-between gap-3">
-        <div className="flex items-center gap-3 text-xs text-white/65">
+        <div className="flex flex-wrap items-center gap-3 text-xs text-white/65">
           <span className="inline-flex items-center gap-1.5">
             <Eye className="h-4 w-4" /> {formatTR(item.views)}
           </span>
@@ -1500,11 +1598,12 @@ function FeaturedExperienceCard({ item, onOpen }: { item: ExperienceItem; onOpen
 
 function ExperienceRow({ item, onOpen }: { item: ExperienceItem; onOpen: () => void }) {
   const sev = severityUI(item.severity)
+
   return (
     <button
       type="button"
       onClick={onOpen}
-      className="group relative w-full overflow-hidden rounded-[22px] border border-white/10 bg-black/20 p-4 text-left transition hover:bg-black/30"
+      className="group relative w-full overflow-hidden rounded-[20px] border border-white/10 bg-black/20 p-4 text-left transition hover:bg-black/30 sm:rounded-[22px]"
     >
       <div className="relative flex items-start justify-between gap-4">
         <div className="min-w-0">

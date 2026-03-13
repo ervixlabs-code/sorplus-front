@@ -2,7 +2,6 @@
 
 import React, { useEffect, useMemo, useRef, useState } from "react"
 import Link from "next/link"
-import { useRouter } from "next/navigation"
 import clsx from "clsx"
 import {
   Sparkles,
@@ -63,7 +62,6 @@ type PolicySection = {
   level: "Zorunlu" | "Bilgi" | "Not"
 }
 
-/** Backend row (SecuritySection) */
 type SecuritySectionRow = {
   id: string
   category: string
@@ -113,7 +111,11 @@ function formatDateTR(iso?: string) {
   if (!iso) return "—"
   const d = new Date(iso)
   if (Number.isNaN(d.getTime())) return "—"
-  return new Intl.DateTimeFormat("tr-TR", { day: "2-digit", month: "long", year: "numeric" }).format(d)
+  return new Intl.DateTimeFormat("tr-TR", {
+    day: "2-digit",
+    month: "long",
+    year: "numeric",
+  }).format(d)
 }
 
 /* ================== SMALL UI ================== */
@@ -189,15 +191,15 @@ function CategoryDropdown({
   }, [])
 
   return (
-    <div ref={ref} className="relative">
+    <div ref={ref} className="relative w-full sm:w-auto">
       <div className="mb-1 text-[11px] font-light text-white/55">Kategori</div>
       <button
         type="button"
         onClick={() => setOpen((s) => !s)}
-        className="flex h-[46px] min-w-[220px] items-center justify-between gap-2 rounded-2xl border border-white/10 bg-white/10 px-4 text-sm text-white/90 shadow-sm backdrop-blur hover:bg-white/15 focus:outline-none focus:ring-4 focus:ring-white/10"
+        className="flex h-[46px] w-full min-w-0 items-center justify-between gap-2 rounded-2xl border border-white/10 bg-white/10 px-4 text-sm text-white/90 shadow-sm backdrop-blur hover:bg-white/15 focus:outline-none focus:ring-4 focus:ring-white/10 sm:min-w-[220px]"
       >
         <span className="truncate">{value}</span>
-        <ChevronDown className={cx("h-4 w-4 text-white/70 transition", open && "rotate-180")} />
+        <ChevronDown className={cx("h-4 w-4 shrink-0 text-white/70 transition", open && "rotate-180")} />
       </button>
 
       {open ? (
@@ -213,7 +215,7 @@ function CategoryDropdown({
                 }}
                 className={cx(
                   "w-full rounded-xl px-3 py-2 text-left text-sm",
-                  opt === value ? "bg-white/10 text-white" : "hover:bg-white/5 text-white/85"
+                  opt === value ? "bg-white/10 text-white" : "text-white/85 hover:bg-white/5"
                 )}
               >
                 {opt}
@@ -237,13 +239,13 @@ function PolicyCard({
   return (
     <div
       id={item.id}
-      className="relative scroll-mt-28 overflow-hidden rounded-[26px] border border-white/10 bg-white/5 p-5 shadow-[0_22px_80px_-60px_rgba(0,0,0,0.80)] backdrop-blur"
+      className="relative scroll-mt-28 overflow-hidden rounded-[22px] border border-white/10 bg-white/5 p-4 shadow-[0_22px_80px_-60px_rgba(0,0,0,0.80)] backdrop-blur sm:rounded-[26px] sm:p-5"
     >
       <div className="pointer-events-none absolute inset-0 opacity-55 [background-image:radial-gradient(circle_at_15%_20%,rgba(99,102,241,0.22),transparent_55%),radial-gradient(circle_at_85%_20%,rgba(16,185,129,0.16),transparent_55%),radial-gradient(circle_at_50%_120%,rgba(249,115,22,0.12),transparent_55%)]" />
       <div className="pointer-events-none absolute inset-0 opacity-[0.18] [background-image:linear-gradient(to_right,rgba(255,255,255,0.08)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.08)_1px,transparent_1px)] [background-size:28px_28px]" />
 
-      <div className="relative flex items-start justify-between gap-3">
-        <div className="min-w-0">
+      <div className="relative flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
             <span className="inline-flex items-center rounded-full border border-white/10 bg-white/10 px-2.5 py-1 text-[11px] font-semibold text-white/90">
               {item.category}
@@ -258,14 +260,16 @@ function PolicyCard({
             </span>
           </div>
 
-          <div className="mt-3 text-[18px] font-semibold leading-snug tracking-tight text-white">{item.title}</div>
+          <div className="mt-3 text-[17px] font-semibold leading-snug tracking-tight text-white sm:text-[18px]">
+            {item.title}
+          </div>
           <div className="mt-2 text-sm leading-relaxed text-white/70">{item.desc}</div>
 
           {item.bullets?.length ? (
             <ul className="mt-4 space-y-2 text-sm text-white/70">
               {item.bullets.map((b, i) => (
                 <li key={i} className="flex items-start gap-2">
-                  <span className="mt-0.5 inline-flex h-5 w-5 items-center justify-center rounded-full bg-emerald-500/15 text-emerald-200">
+                  <span className="mt-0.5 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-500/15 text-emerald-200">
                     ✓
                   </span>
                   <span>{b}</span>
@@ -275,7 +279,7 @@ function PolicyCard({
           ) : null}
         </div>
 
-        <div className="flex flex-col items-end gap-2">
+        <div className="flex items-center justify-between gap-3 sm:flex-col sm:items-end">
           <span className="relative inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/10 bg-white/10 text-white/85">
             {item.icon}
           </span>
@@ -301,8 +305,6 @@ function PolicyCard({
 
 /* ================== PAGE ================== */
 export default function Page() {
-  const router = useRouter()
-
   const [category, setCategory] = useState<string | "Tümü">("Tümü")
   const [q, setQ] = useState("")
   const searchRef = useRef<HTMLInputElement | null>(null)
@@ -321,7 +323,6 @@ export default function Page() {
     toastTimer.current = window.setTimeout(() => setToast({ open: false, text: "" }), 2200)
   }
 
-  // ⌘K / Ctrl+K focus search
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       const isMac = navigator.platform.toLowerCase().includes("mac")
@@ -384,7 +385,11 @@ export default function Page() {
         desc: "Verileri yalnızca hizmeti çalıştırmak, güvenliği sağlamak ve deneyimi iyileştirmek için kullanırız.",
         level: "Bilgi",
         icon: <FileText className="h-4 w-4" />,
-        bullets: ["Hesap oluşturma / doğrulama / giriş işlemleri", "Spam, kötüye kullanım ve güvenlik ihlallerini önleme", "Hizmet performansını ölçme ve iyileştirme"],
+        bullets: [
+          "Hesap oluşturma / doğrulama / giriş işlemleri",
+          "Spam, kötüye kullanım ve güvenlik ihlallerini önleme",
+          "Hizmet performansını ölçme ve iyileştirme",
+        ],
       },
       {
         id: "cerezler",
@@ -394,7 +399,11 @@ export default function Page() {
           "Oturum yönetimi, güvenlik ve temel analitik için çerezler kullanılabilir. Gerekli olmayan çerezler için tercih sunulabilir.",
         level: "Not",
         icon: <Cookie className="h-4 w-4" />,
-        bullets: ["Zorunlu çerezler: oturum / güvenlik", "Performans: sayfa yüklenme/hata ölçümü", "Tercih çerezleri: tema/dil gibi ayarlar (varsa)"],
+        bullets: [
+          "Zorunlu çerezler: oturum / güvenlik",
+          "Performans: sayfa yüklenme/hata ölçümü",
+          "Tercih çerezleri: tema/dil gibi ayarlar (varsa)",
+        ],
       },
       {
         id: "paylasim-aktarim",
@@ -404,7 +413,11 @@ export default function Page() {
           "Kişisel verileri satmayız. Hizmet için gerekli durumlarda, yalnızca sınırlı kapsamda ve sözleşmeli iş ortaklarıyla paylaşım olabilir.",
         level: "Bilgi",
         icon: <Share2 className="h-4 w-4" />,
-        bullets: ["Barındırma (hosting), log/izleme, e-posta/SMS sağlayıcıları (varsa)", "Yasal yükümlülükler kapsamında resmi talepler", "Dolandırıcılık/kötüye kullanım tespitinde güvenlik süreçleri"],
+        bullets: [
+          "Barındırma (hosting), log/izleme, e-posta/SMS sağlayıcıları (varsa)",
+          "Yasal yükümlülükler kapsamında resmi talepler",
+          "Dolandırıcılık/kötüye kullanım tespitinde güvenlik süreçleri",
+        ],
       },
       {
         id: "saklama",
@@ -413,7 +426,11 @@ export default function Page() {
         desc: "Verileri mevzuata uygun sürelerle ve amaçla sınırlı tutarız. Gereksiz veriyi daha uzun saklamayız.",
         level: "Bilgi",
         icon: <Trash2 className="h-4 w-4" />,
-        bullets: ["Hesap verileri: hesap aktif kaldıkça veya yasal süreler boyunca", "Log kayıtları: güvenlik ve hata ayıklama için sınırlı süre", "Silme talepleri: doğrulama + yasal yükümlülük kontrolleri sonrası"],
+        bullets: [
+          "Hesap verileri: hesap aktif kaldıkça veya yasal süreler boyunca",
+          "Log kayıtları: güvenlik ve hata ayıklama için sınırlı süre",
+          "Silme talepleri: doğrulama + yasal yükümlülük kontrolleri sonrası",
+        ],
       },
       {
         id: "haklar",
@@ -422,7 +439,12 @@ export default function Page() {
         desc: "Verilerin üzerinde kontrol hakkın var. Talep kanallarımız üzerinden başvurabilirsin.",
         level: "Bilgi",
         icon: <UserCheck className="h-4 w-4" />,
-        bullets: ["Erişim: hangi verilerin işlendiğini öğrenme", "Düzeltme: yanlış/eksik veriyi düzeltme", "Silme: şartlar uygunsa silinmesini isteme", "İtiraz: belirli işlemlere itiraz etme"],
+        bullets: [
+          "Erişim: hangi verilerin işlendiğini öğrenme",
+          "Düzeltme: yanlış/eksik veriyi düzeltme",
+          "Silme: şartlar uygunsa silinmesini isteme",
+          "İtiraz: belirli işlemlere itiraz etme",
+        ],
       },
       {
         id: "guvenlik",
@@ -432,7 +454,11 @@ export default function Page() {
           "Yetkisiz erişimi önlemek için teknik ve idari önlemler uygularız. Ancak internet üzerinden aktarımda %100 garanti yoktur.",
         level: "Not",
         icon: <Shield className="h-4 w-4" />,
-        bullets: ["Erişim kontrolü ve rol bazlı yetkilendirme", "Şüpheli aktivite izleme ve oran sınırlama", "Hassas veri tespiti için maskeleme / moderasyon"],
+        bullets: [
+          "Erişim kontrolü ve rol bazlı yetkilendirme",
+          "Şüpheli aktivite izleme ve oran sınırlama",
+          "Hassas veri tespiti için maskeleme / moderasyon",
+        ],
       },
       {
         id: "iletisim",
@@ -441,7 +467,11 @@ export default function Page() {
         desc: "Gizlilik taleplerin ve soruların için iletişim kanallarımızı kullanabilirsin.",
         level: "Bilgi",
         icon: <Mail className="h-4 w-4" />,
-        bullets: ["E-posta: destek@ornek.com (placeholder)", "Talep türü: erişim / düzeltme / silme / itiraz", "Yanıt süresi: mevzuata uygun şekilde"],
+        bullets: [
+          "E-posta: destek@ornek.com (placeholder)",
+          "Talep türü: erişim / düzeltme / silme / itiraz",
+          "Yanıt süresi: mevzuata uygun şekilde",
+        ],
       },
     ],
     []
@@ -462,9 +492,7 @@ export default function Page() {
         try {
           const j = await res.json()
           if (j?.message) msg = Array.isArray(j.message) ? j.message.join(", ") : String(j.message)
-        } catch {
-          // ignore
-        }
+        } catch {}
         throw new Error(msg)
       }
 
@@ -484,7 +512,6 @@ export default function Page() {
 
       setApiSections(mapped.length ? mapped : null)
 
-      // "Son güncelleme" için max(updatedAt/createdAt)
       const dates = (Array.isArray(data) ? data : [])
         .map((x) => x.updatedAt || x.createdAt || "")
         .filter(Boolean)
@@ -512,9 +539,9 @@ export default function Page() {
     const set = new Set<string>()
     for (const s of sections) set.add(s.category)
     const arr = Array.from(set)
-    // Eğer API boşsa default düzeni koru
+
     if (!arr.length) return DEFAULT_CATEGORIES
-    // Default sıralama ile mümkün olduğunca eşleştir, kalanları sona ekle
+
     const ordered: string[] = []
     for (const c of DEFAULT_CATEGORIES) if (set.has(c)) ordered.push(c)
     for (const c of arr) if (!ordered.includes(c)) ordered.push(c)
@@ -548,10 +575,9 @@ export default function Page() {
   }
 
   return (
-    <div className="relative min-h-screen bg-[#0B1020] text-slate-100">
-      {/* toast */}
+    <div className="relative min-h-screen overflow-x-hidden bg-[#0B1020] text-slate-100">
       {toast.open ? (
-        <div className="fixed bottom-4 right-4 z-[100] w-[340px] max-w-[calc(100vw-32px)] rounded-2xl border border-white/10 bg-slate-900/90 p-4 text-sm text-white shadow-[0_16px_60px_rgba(15,23,42,0.22)] backdrop-blur">
+        <div className="fixed bottom-4 right-4 z-[100] w-[calc(100vw-32px)] max-w-[340px] rounded-2xl border border-white/10 bg-slate-900/90 p-4 text-sm text-white shadow-[0_16px_60px_rgba(15,23,42,0.22)] backdrop-blur sm:w-[340px]">
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0">
               <div className="text-sm font-semibold">{toast.text}</div>
@@ -567,13 +593,16 @@ export default function Page() {
         </div>
       ) : null}
 
-      {/* GLOBAL KEYFRAMES */}
       <style jsx global>{`
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .no-scrollbar::-webkit-scrollbar {
+          display: none;
+        }
+        .no-scrollbar {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
       `}</style>
 
-      {/* 🌌 GLOBAL DARK GRID BACKGROUND */}
       <div className="pointer-events-none fixed inset-0 -z-10">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_10%,rgba(99,102,241,0.22),transparent_45%),radial-gradient(circle_at_80%_20%,rgba(16,185,129,0.20),transparent_40%),radial-gradient(circle_at_50%_90%,rgba(249,115,22,0.16),transparent_50%)]" />
         <div
@@ -589,14 +618,13 @@ export default function Page() {
         <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/60" />
       </div>
 
-      {/* TOP INFO BAND */}
       <div className="border-b border-white/10 bg-[#1F2333] text-white">
-        <div className="mx-auto flex w-full max-w-screen-2xl items-center justify-between gap-3 px-6 py-2.5 lg:px-10 2xl:px-14">
+        <div className="mx-auto flex w-full max-w-screen-2xl flex-col gap-2 px-4 py-2.5 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-10 2xl:px-14">
           <div className="text-sm">
             Gizlilik • <span className="ml-2 text-white/70">kişisel verilerini koruyoruz</span>
           </div>
 
-          <div className="hidden items-center gap-2 text-sm text-white/80 sm:flex">
+          <div className="flex flex-wrap items-center gap-2 text-sm text-white/80">
             <button
               type="button"
               onClick={load}
@@ -606,26 +634,25 @@ export default function Page() {
               Yenile
             </button>
 
-            <span className="ml-2">
+            <span>
               Kısayol: <span className="font-semibold text-white">⌘K / Ctrl+K</span> → Ara
             </span>
           </div>
         </div>
       </div>
 
-      <PublicTopbar subtitle="Sorrunlar" showSearchStub={false} nextUrlForAuth="/sikayetler" />
+      <PublicTopbar subtitle="Sorunlar" showSearchStub={false} nextUrlForAuth="/sikayetler" />
 
-      <main className="mx-auto w-full max-w-screen-2xl px-6 pb-16 lg:px-10 2xl:px-14">
-        {/* HEADER */}
-        <section className="pt-8">
+      <main className="mx-auto w-full max-w-screen-2xl px-4 pb-16 sm:px-6 lg:px-10 2xl:px-14">
+        <section className="pt-6 sm:pt-8">
           <div className="flex flex-col items-start justify-between gap-5 md:flex-row md:items-end">
             <div>
-              <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/10 px-3 py-1.5 text-[12px] text-white/85 shadow-sm backdrop-blur">
+              <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/10 px-3 py-1.5 text-[11px] text-white/85 shadow-sm backdrop-blur sm:text-[12px]">
                 <span className="h-2 w-2 rounded-full bg-emerald-400" />
                 KVKK • Güvenlik • Şeffaflık
               </div>
 
-              <h1 className="mt-4 text-[36px] font-semibold tracking-tight text-white md:text-[44px]">
+              <h1 className="mt-4 text-[30px] font-semibold tracking-tight text-white sm:text-[36px] md:text-[44px]">
                 Gizlilik Politikası
               </h1>
 
@@ -634,7 +661,6 @@ export default function Page() {
                 Aşağıdan kategori seçip arayabilirsin.
               </p>
 
-              {/* load state */}
               {loading ? (
                 <div className="mt-4 inline-flex items-center gap-2 rounded-2xl border border-white/10 bg-white/5 px-4 py-2 text-sm text-white/70 backdrop-blur">
                   <Loader2 className="h-4 w-4 animate-spin" />
@@ -648,9 +674,8 @@ export default function Page() {
               ) : null}
             </div>
 
-            <div className="flex w-full flex-col gap-3 sm:flex-row sm:items-end md:w-auto">
-              {/* search */}
-              <div className="w-full sm:w-[380px]">
+            <div className="flex w-full flex-col gap-3 md:w-auto md:flex-row md:items-end">
+              <div className="w-full md:w-[340px] lg:w-[380px]">
                 <div className="mb-1 text-[11px] font-light text-white/55">Ara</div>
                 <div className="flex items-center overflow-hidden rounded-2xl border border-white/10 bg-white/10 shadow-sm backdrop-blur">
                   <div className="px-4 text-white/70">
@@ -666,39 +691,38 @@ export default function Page() {
                 </div>
               </div>
 
-              <div className="flex items-end gap-3">
+              <div className="w-full md:w-auto">
                 <CategoryDropdown value={category} onChange={setCategory} options={categories} />
               </div>
             </div>
           </div>
 
-          {/* Quick CTA */}
-          <div className="mt-6 flex flex-wrap items-center justify-between gap-3 rounded-[24px] border border-white/10 bg-white/5 px-5 py-4 backdrop-blur">
-            <div className="flex items-center gap-2 text-xs text-white/65">
-              <Lock className="h-4 w-4 text-emerald-300" />
-              Hassas bilgi paylaşma. Ekran görüntüsü yükleyeceksen{" "}
-              <span className="font-semibold text-white/85">mutlaka sansürle</span>.
-            </div>
+          <div className="mt-6 rounded-[20px] border border-white/10 bg-white/5 px-4 py-4 backdrop-blur sm:rounded-[24px] sm:px-5">
+            <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+              <div className="flex flex-wrap items-center gap-2 text-xs text-white/65">
+                <Lock className="h-4 w-4 text-emerald-300" />
+                Hassas bilgi paylaşma. Ekran görüntüsü yükleyeceksen{" "}
+                <span className="font-semibold text-white/85">mutlaka sansürle</span>.
+              </div>
 
-            <div className="flex items-center gap-2">
-              <PillLink href="/sikayet-yaz" variant="secondary">
-                Sorun Yaz
-                <ArrowRight className="h-4 w-4" />
-              </PillLink>
-              <PillLink href="/sikayetler" variant="ghost">
-                Sorunları Gör
-              </PillLink>
+              <div className="flex flex-wrap items-center gap-2">
+                <PillLink href="/sikayet-yaz" variant="secondary">
+                  Sorun Yaz
+                  <ArrowRight className="h-4 w-4" />
+                </PillLink>
+                <PillLink href="/sikayetler" variant="ghost">
+                  Sorunları Gör
+                </PillLink>
+              </div>
             </div>
           </div>
         </section>
 
-        {/* MAIN GRID */}
         <section className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-12">
-          {/* LEFT: content */}
           <div className="lg:col-span-8">
             {filtered.length === 0 ? (
-              <div className="rounded-[28px] border border-white/10 bg-white/5 p-10 text-center text-white/70 backdrop-blur">
-                Sonuç bulunamadı. Arama/filtreyi değiştirip tekrar dene.
+              <div className="rounded-[24px] border border-white/10 bg-white/5 p-8 text-center text-white/70 backdrop-blur sm:rounded-[28px] sm:p-10">
+                Sonuç bulunamadı. Arama / filtreyi değiştirip tekrar dene.
               </div>
             ) : (
               <div className="grid grid-cols-1 gap-5">
@@ -708,8 +732,7 @@ export default function Page() {
               </div>
             )}
 
-            {/* Extra notice */}
-            <div className="mt-8 rounded-[26px] border border-white/10 bg-white/5 p-5 backdrop-blur">
+            <div className="mt-8 rounded-[22px] border border-white/10 bg-white/5 p-4 backdrop-blur sm:rounded-[26px] sm:p-5">
               <div className="flex items-start justify-between gap-3">
                 <div>
                   <div className="text-sm font-semibold text-white/90">Önemli Not</div>
@@ -717,18 +740,16 @@ export default function Page() {
                     Bu metin demo/placeholder içeriktir. Hukuki nihai metin için danışman görüşü önerilir.
                   </div>
                 </div>
-                <div className="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-white/10 bg-white/10">
+                <div className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-white/10 bg-white/10">
                   <Info className="h-5 w-5 text-indigo-200" />
                 </div>
               </div>
             </div>
           </div>
 
-          {/* RIGHT: sidebar */}
           <div className="lg:col-span-4">
-            <div className="sticky top-[96px] space-y-5">
-              {/* Quick checklist */}
-              <div className="rounded-[30px] border border-white/10 bg-white/5 p-6 shadow-[0_30px_110px_-80px_rgba(0,0,0,0.85)] backdrop-blur">
+            <div className="space-y-5 lg:sticky lg:top-[96px]">
+              <div className="rounded-[24px] border border-white/10 bg-white/5 p-5 shadow-[0_30px_110px_-80px_rgba(0,0,0,0.85)] backdrop-blur sm:rounded-[30px] sm:p-6">
                 <div className="flex items-start justify-between gap-3">
                   <div>
                     <div className="text-sm font-semibold text-white/90">Hızlı özet</div>
@@ -747,7 +768,7 @@ export default function Page() {
                     "Güvenlik için log’lar sınırlı süre tutulabilir.",
                   ].map((t) => (
                     <li key={t} className="flex items-start gap-2">
-                      <span className="mt-0.5 inline-flex h-5 w-5 items-center justify-center rounded-full bg-emerald-500/15 text-emerald-200">
+                      <span className="mt-0.5 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-500/15 text-emerald-200">
                         ✓
                       </span>
                       <span>{t}</span>
@@ -766,8 +787,7 @@ export default function Page() {
                 </div>
               </div>
 
-              {/* Jump to */}
-              <div className="rounded-[30px] border border-white/10 bg-white/5 p-6 backdrop-blur">
+              <div className="rounded-[24px] border border-white/10 bg-white/5 p-5 backdrop-blur sm:rounded-[30px] sm:p-6">
                 <div className="text-sm font-semibold text-white/90">Bölümlere git</div>
                 <div className="mt-1 text-sm text-white/65">Tek tıkla scroll</div>
 
@@ -779,13 +799,13 @@ export default function Page() {
                       onClick={() => scrollToId(s.id)}
                       className="flex items-center justify-between rounded-2xl border border-white/10 bg-black/20 px-4 py-3 text-sm text-white/80 hover:bg-black/25"
                     >
-                      <span className="inline-flex items-center gap-2">
-                        <span className="inline-flex h-8 w-8 items-center justify-center rounded-2xl border border-white/10 bg-white/10">
+                      <span className="inline-flex min-w-0 items-center gap-2">
+                        <span className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-2xl border border-white/10 bg-white/10">
                           {s.icon}
                         </span>
-                        <span className="font-semibold">{s.category}</span>
+                        <span className="truncate font-semibold">{s.category}</span>
                       </span>
-                      <span className="text-white/55">→</span>
+                      <span className="shrink-0 text-white/55">→</span>
                     </button>
                   ))}
                 </div>
@@ -796,8 +816,7 @@ export default function Page() {
                 </div>
               </div>
 
-              {/* FAQ mini */}
-              <div className="rounded-[30px] border border-white/10 bg-white/5 p-6 backdrop-blur">
+              <div className="rounded-[24px] border border-white/10 bg-white/5 p-5 backdrop-blur sm:rounded-[30px] sm:p-6">
                 <div className="text-sm font-semibold text-white/90">Mini SSS</div>
                 <div className="mt-1 text-sm text-white/65">Gizlilikle ilgili</div>
 
@@ -818,8 +837,8 @@ export default function Page() {
                   ].map((x) => (
                     <details key={x.q} className="rounded-2xl border border-white/10 bg-black/20 p-4 open:bg-black/25">
                       <summary className="cursor-pointer list-none text-sm font-semibold text-white/85">
-                        <span className="inline-flex items-center gap-2">
-                          <HelpCircle className="h-4 w-4 text-white/70" />
+                        <span className="inline-flex items-start gap-2">
+                          <HelpCircle className="mt-0.5 h-4 w-4 shrink-0 text-white/70" />
                           {x.q}
                         </span>
                       </summary>
@@ -829,13 +848,12 @@ export default function Page() {
                 </div>
 
                 <div className="mt-4 text-xs text-white/55">
-                  İstersen bir de <span className="font-semibold text-white/75">/kvkk</span> sayfası çıkarırız (aydınlatma
-                  + başvuru formu).
+                  İstersen bir de <span className="font-semibold text-white/75">/kvkk</span> sayfası çıkarırız
+                  (aydınlatma + başvuru formu).
                 </div>
               </div>
 
-              {/* Shortcuts */}
-              <div className="rounded-[30px] border border-white/10 bg-white/5 p-6 backdrop-blur">
+              <div className="rounded-[24px] border border-white/10 bg-white/5 p-5 backdrop-blur sm:rounded-[30px] sm:p-6">
                 <div className="text-sm font-semibold text-white/90">Kısayollar</div>
                 <div className="mt-3 flex flex-col gap-2">
                   <PillButton variant="ghost" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>
@@ -850,13 +868,16 @@ export default function Page() {
           </div>
         </section>
 
-        {/* BOTTOM NAV */}
         <div className="mt-10 flex flex-col items-start justify-between gap-3 border-t border-white/10 pt-6 md:flex-row md:items-center">
           <div className="text-xs text-white/60">
             Son güncelleme:{" "}
-            <span className="font-semibold text-white/75">{lastUpdated || (apiSections ? "—" : "demo")}</span> • Bu metin örnek amaçlıdır.
+            <span className="font-semibold text-white/75">
+              {lastUpdated || (apiSections ? "—" : "demo")}
+            </span>{" "}
+            • Bu metin örnek amaçlıdır.
           </div>
-          <div className="flex items-center gap-2">
+
+          <div className="flex flex-wrap items-center gap-2">
             <PillLink href="/sikayetler" variant="ghost">
               Sorunlara dön
             </PillLink>

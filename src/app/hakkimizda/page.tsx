@@ -27,6 +27,7 @@ import Footer from "@/components/Footer"
 
 /* ================== API ================== */
 const API_BASE = (process.env.NEXT_PUBLIC_API_BASE || "").replace(/\/+$/, "")
+
 function apiUrl(path: string) {
   return API_BASE ? `${API_BASE}${path}` : path
 }
@@ -44,7 +45,11 @@ function formatDateTR(iso?: string) {
   if (!iso) return "—"
   const d = new Date(iso)
   if (Number.isNaN(d.getTime())) return "—"
-  return new Intl.DateTimeFormat("tr-TR", { day: "2-digit", month: "long", year: "numeric" }).format(d)
+  return new Intl.DateTimeFormat("tr-TR", {
+    day: "2-digit",
+    month: "long",
+    year: "numeric",
+  }).format(d)
 }
 
 /* ================== UI COMPONENTS ================== */
@@ -67,6 +72,7 @@ function PillButton({
       : variant === "white"
       ? "bg-white text-black shadow-sm hover:bg-white/90 focus:ring-white/30"
       : "border border-white/15 bg-white/10 text-white shadow-sm hover:bg-white/15 focus:ring-white/20"
+
   return (
     <button type="button" onClick={onClick} className={clsx(base, styles)}>
       {children}
@@ -93,12 +99,12 @@ function GlassCard({
   icon: React.ReactNode
 }) {
   return (
-    <div className="relative overflow-hidden rounded-[26px] border border-white/10 bg-white/5 p-5 shadow-[0_30px_110px_-80px_rgba(0,0,0,0.85)] backdrop-blur">
+    <div className="relative overflow-hidden rounded-[22px] border border-white/10 bg-white/5 p-4 shadow-[0_30px_110px_-80px_rgba(0,0,0,0.85)] backdrop-blur sm:rounded-[26px] sm:p-5">
       <div className="pointer-events-none absolute inset-0 opacity-60 [background-image:radial-gradient(circle_at_20%_10%,rgba(99,102,241,0.22),transparent_45%),radial-gradient(circle_at_80%_20%,rgba(16,185,129,0.18),transparent_45%),radial-gradient(circle_at_50%_110%,rgba(249,115,22,0.14),transparent_55%)]" />
       <div className="pointer-events-none absolute inset-0 opacity-[0.22] [background-image:linear-gradient(to_right,rgba(255,255,255,0.08)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.08)_1px,transparent_1px)] [background-size:26px_26px]" />
 
       <div className="relative flex items-start gap-4">
-        <div className="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-white/10 ring-1 ring-white/10 text-white">
+        <div className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-white/10 ring-1 ring-white/10 text-white">
           {icon}
         </div>
         <div className="min-w-0">
@@ -106,6 +112,14 @@ function GlassCard({
           <div className="mt-1 text-sm leading-relaxed text-white/70">{desc}</div>
         </div>
       </div>
+    </div>
+  )
+}
+
+function SparkIcon() {
+  return (
+    <div className="text-white">
+      <span className="inline-block">✨</span>
     </div>
   )
 }
@@ -150,7 +164,6 @@ export default function Page() {
     }
   }
 
-  // ⌘K / Ctrl+K → /sikayet-yaz
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
@@ -167,10 +180,8 @@ export default function Page() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  /* ================== CONTENT MAPPING (flexible) ================== */
   const content = useMemo(() => (doc?.content ? doc.content : null), [doc])
 
-  // Hero / Mission text
   const heroPill = (content?.heroPill as string) || "Misyonumuz"
   const heroTitle =
     (content?.heroTitle as string) ||
@@ -185,7 +196,6 @@ export default function Page() {
     (content?.description as string) ||
     "Deneyim; kategori bazlı sorunların paylaşımlarını daha şeffaf, daha güvenli ve daha çözüm odaklı bir çerçevede bir araya getirmeyi hedefler. Firma hedefleme yok — amaç linç değil, farkındalık ve ortak akıl."
 
-  // Right sidebar cards
   const rightCards: Array<{ title: string; desc: string; icon?: string }> = Array.isArray(content?.rightCards)
     ? content.rightCards
     : [
@@ -206,7 +216,6 @@ export default function Page() {
         },
       ]
 
-  // Values section
   const valuesTitle = (content?.valuesTitle as string) || "İlkelerimiz net"
   const valuesDesc =
     (content?.valuesDesc as string) || "Platformu büyütürken en önce güveni ve kullanıcı faydasını koruyoruz."
@@ -214,9 +223,21 @@ export default function Page() {
   const valuesCards: Array<{ title: string; desc: string; icon?: string }> = Array.isArray(content?.valuesCards)
     ? content.valuesCards
     : [
-        { title: "Gizlilik", desc: "Kişisel veriler paylaşılmaz. İhlal içeren içerikler kaldırılabilir.", icon: "lock" },
-        { title: "Adalet", desc: "İçerik değerlendirmesi, kurallara uygunluk üzerinden yapılır.", icon: "scale" },
-        { title: "Çözüm odak", desc: "Hedef: kavga değil, süreç/sonuç paylaşımı ve faydalı öneri.", icon: "chat" },
+        {
+          title: "Gizlilik",
+          desc: "Kişisel veriler paylaşılmaz. İhlal içeren içerikler kaldırılabilir.",
+          icon: "lock",
+        },
+        {
+          title: "Adalet",
+          desc: "İçerik değerlendirmesi, kurallara uygunluk üzerinden yapılır.",
+          icon: "scale",
+        },
+        {
+          title: "Çözüm odak",
+          desc: "Hedef: kavga değil, süreç/sonuç paylaşımı ve faydalı öneri.",
+          icon: "chat",
+        },
         {
           title: "Şeffaflık",
           desc: "İleride şeffaflık raporları ve moderasyon metrikleri yayınlanır (MVP sonrası).",
@@ -253,19 +274,18 @@ export default function Page() {
     }
   }
 
-  function SparkIcon() {
-    return <div className="text-white"><span className="inline-block">✨</span></div>
-  }
-
   return (
-    <div className="relative min-h-screen bg-[#0B1020] text-slate-100">
-      {/* GLOBAL KEYFRAMES */}
+    <div className="relative min-h-screen overflow-x-hidden bg-[#0B1020] text-slate-100">
       <style jsx global>{`
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .no-scrollbar::-webkit-scrollbar {
+          display: none;
+        }
+        .no-scrollbar {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
       `}</style>
 
-      {/* 🌌 GLOBAL DARK GRID BACKGROUND */}
       <div className="pointer-events-none fixed inset-0 -z-10">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_10%,rgba(99,102,241,0.22),transparent_45%),radial-gradient(circle_at_80%_20%,rgba(16,185,129,0.20),transparent_40%),radial-gradient(circle_at_50%_90%,rgba(249,115,22,0.16),transparent_50%)]" />
         <div
@@ -281,22 +301,22 @@ export default function Page() {
         <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/60" />
       </div>
 
-      {/* TOP INFO BAND */}
       <div className="border-b border-white/10 bg-[#1F2333] text-white">
-        <div className="mx-auto flex w-full max-w-screen-2xl items-center justify-between gap-3 px-6 py-2.5 lg:px-10 2xl:px-14">
+        <div className="mx-auto flex w-full max-w-screen-2xl flex-col gap-2 px-4 py-2.5 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-10 2xl:px-14">
           <div className="text-sm">
             Hakkımızda • <span className="ml-2 text-white/70">Deneyim platformu</span>
           </div>
-          <div className="hidden items-center gap-2 text-sm text-white/80 sm:flex">
-            ⌘K / Ctrl+K → <span className="font-semibold text-white">Sorun Yaz</span>
+          <div className="flex flex-wrap items-center gap-2 text-sm text-white/80">
+            <span>
+              ⌘K / Ctrl+K → <span className="font-semibold text-white">Sorun Yaz</span>
+            </span>
           </div>
         </div>
       </div>
 
-      <PublicTopbar subtitle="Sorunlar" showSearchStub={false} nextUrlForAuth="/sikayetler" />
+      <PublicTopbar subtitle="Hakkımızda" showSearchStub={false} nextUrlForAuth="/sikayetler" />
 
-      <main className="mx-auto w-full max-w-screen-2xl px-6 pb-16 pt-8 lg:px-10 2xl:px-14">
-        {/* BACK */}
+      <main className="mx-auto w-full max-w-screen-2xl px-4 pb-16 pt-6 sm:px-6 sm:pt-8 lg:px-10 2xl:px-14">
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <button
             type="button"
@@ -322,18 +342,17 @@ export default function Page() {
           </div>
         </div>
 
-        {/* LOAD/ERR BANNER */}
         {loading ? (
-          <div className="mt-6 rounded-[26px] border border-white/10 bg-white/5 p-4 text-sm text-white/70 backdrop-blur">
+          <div className="mt-6 rounded-[22px] border border-white/10 bg-white/5 p-4 text-sm text-white/70 backdrop-blur sm:rounded-[26px]">
             <div className="inline-flex items-center gap-2">
               <Loader2 className="h-4 w-4 animate-spin" />
               İçerik yükleniyor…
             </div>
           </div>
         ) : err ? (
-          <div className="mt-6 rounded-[26px] border border-white/10 bg-white/5 p-4 text-sm text-white/70 backdrop-blur">
+          <div className="mt-6 rounded-[22px] border border-white/10 bg-white/5 p-4 text-sm text-white/70 backdrop-blur sm:rounded-[26px]">
             <div className="flex items-start gap-3">
-              <AlertTriangle className="mt-0.5 h-5 w-5 text-orange-200" />
+              <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-orange-200" />
               <div className="min-w-0">
                 <div className="font-semibold text-white/85">Hakkımızda yüklenemedi</div>
                 <div className="mt-1 break-words">{err}</div>
@@ -342,25 +361,26 @@ export default function Page() {
           </div>
         ) : null}
 
-        {/* HERO */}
         <section className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-12">
           <div className="lg:col-span-7">
-            <div className="relative overflow-hidden rounded-[34px] border border-white/10 bg-white/5 p-7 shadow-[0_35px_120px_-90px_rgba(0,0,0,0.85)] backdrop-blur">
+            <div className="relative overflow-hidden rounded-[24px] border border-white/10 bg-white/5 p-5 shadow-[0_35px_120px_-90px_rgba(0,0,0,0.85)] backdrop-blur sm:rounded-[34px] sm:p-7">
               <div className="pointer-events-none absolute inset-0 opacity-70 [background-image:radial-gradient(circle_at_15%_15%,rgba(99,102,241,0.26),transparent_50%),radial-gradient(circle_at_85%_35%,rgba(16,185,129,0.20),transparent_55%),radial-gradient(circle_at_50%_120%,rgba(249,115,22,0.16),transparent_55%)]" />
               <div className="pointer-events-none absolute inset-0 opacity-[0.20] [background-image:linear-gradient(to_right,rgba(255,255,255,0.08)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.08)_1px,transparent_1px)] [background-size:28px_28px]" />
 
               <div className="relative">
-                <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/10 px-3 py-1.5 text-[12px] text-white/85 shadow-sm backdrop-blur">
+                <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/10 px-3 py-1.5 text-[11px] text-white/85 shadow-sm backdrop-blur sm:text-[12px]">
                   <span className="h-2 w-2 rounded-full bg-emerald-400" />
                   {heroPill}
                 </div>
 
-                <h1 className="mt-5 text-[34px] font-extrabold leading-[1.08] tracking-tight text-white md:text-[44px]">
+                <h1 className="mt-5 text-[30px] font-extrabold leading-[1.08] tracking-tight text-white sm:text-[34px] md:text-[44px]">
                   {heroTitle}
                   <span className="block text-white/85">{heroTitle2}</span>
                 </h1>
 
-                <p className="mt-4 max-w-2xl text-sm leading-relaxed text-white/70 md:text-base">{heroDesc}</p>
+                <p className="mt-4 max-w-2xl text-sm leading-relaxed text-white/70 md:text-base">
+                  {heroDesc}
+                </p>
 
                 <div className="mt-6 flex flex-wrap items-center gap-3">
                   <PillButton variant="secondary" onClick={goList}>
@@ -392,7 +412,6 @@ export default function Page() {
             </div>
           </div>
 
-          {/* RIGHT SIDEBAR */}
           <div className="lg:col-span-5">
             <div className="space-y-5">
               {rightCards.slice(0, 3).map((c, idx) => (
@@ -402,18 +421,20 @@ export default function Page() {
           </div>
         </section>
 
-        {/* VALUES */}
         <section className="mt-10">
-          <div className="flex items-end justify-between gap-4">
+          <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
             <div>
               <div className="text-sm font-semibold text-white/85">Değerlerimiz</div>
-              <div className="mt-1 text-[26px] font-extrabold tracking-tight text-white">{valuesTitle}</div>
+              <div className="mt-1 text-[24px] font-extrabold tracking-tight text-white sm:text-[26px]">
+                {valuesTitle}
+              </div>
               <div className="mt-2 max-w-2xl text-sm text-white/70">{valuesDesc}</div>
             </div>
+
             <button
               type="button"
               onClick={() => router.push("/kurallar")}
-              className="hidden items-center gap-2 rounded-full border border-white/10 bg-white/10 px-4 py-2 text-xs font-semibold text-white/85 backdrop-blur hover:bg-white/15 md:inline-flex"
+              className="inline-flex items-center gap-2 self-start rounded-full border border-white/10 bg-white/10 px-4 py-2 text-xs font-semibold text-white/85 backdrop-blur hover:bg-white/15 md:self-auto"
             >
               Kurallara git <ChevronRight className="h-4 w-4" />
             </button>
@@ -426,9 +447,8 @@ export default function Page() {
           </div>
         </section>
 
-        {/* CONTACT CTA */}
         <section className="mt-10">
-          <div className="relative overflow-hidden rounded-[34px] border border-white/10 bg-white/5 p-7 shadow-[0_35px_120px_-90px_rgba(0,0,0,0.85)] backdrop-blur">
+          <div className="relative overflow-hidden rounded-[24px] border border-white/10 bg-white/5 p-5 shadow-[0_35px_120px_-90px_rgba(0,0,0,0.85)] backdrop-blur sm:rounded-[34px] sm:p-7">
             <div className="pointer-events-none absolute inset-0 opacity-70 [background-image:radial-gradient(circle_at_20%_10%,rgba(99,102,241,0.26),transparent_50%),radial-gradient(circle_at_85%_35%,rgba(16,185,129,0.20),transparent_55%)]" />
             <div className="pointer-events-none absolute inset-0 opacity-[0.20] [background-image:linear-gradient(to_right,rgba(255,255,255,0.08)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.08)_1px,transparent_1px)] [background-size:28px_28px]" />
 
@@ -438,7 +458,7 @@ export default function Page() {
                 <div className="mt-1 text-sm text-white/70">{contactDesc}</div>
               </div>
 
-              <div className="flex flex-wrap items-center gap-3">
+              <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:flex-wrap sm:items-center">
                 <PillButton variant="secondary" onClick={() => router.push("/iletisim")}>
                   <Mail className="h-4 w-4" />
                   İletişim Sayfası
@@ -451,15 +471,15 @@ export default function Page() {
           </div>
         </section>
 
-        {/* BOTTOM NAV */}
         <div className="mt-10 flex flex-col items-start justify-between gap-3 border-t border-white/10 pt-6 md:flex-row md:items-center">
           <div className="text-xs text-white/60">
             {bottomNote}{" "}
-            <span className="ml-2 text-white/40">
-              (Son güncelleme: <span className="text-white/70 font-semibold">{updatedText}</span>)
+            <span className="ml-0 mt-1 inline-block text-white/40 sm:ml-2 sm:mt-0">
+              (Son güncelleme: <span className="font-semibold text-white/70">{updatedText}</span>)
             </span>
           </div>
-          <div className="flex items-center gap-2">
+
+          <div className="flex flex-wrap items-center gap-2">
             <PillButton variant="ghost" onClick={goList}>
               Sorunlara dön
             </PillButton>

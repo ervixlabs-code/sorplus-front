@@ -2,10 +2,8 @@
 
 import React, { useEffect, useMemo, useRef, useState } from "react"
 import Link from "next/link"
-import { useRouter } from "next/navigation"
 import clsx from "clsx"
 import {
-  Sparkles,
   Search,
   ChevronDown,
   Cookie,
@@ -21,14 +19,12 @@ import {
   XCircle,
 } from "lucide-react"
 import Footer from "@/components/Footer"
-
 import PublicTopbar from "@/components/PublicTopbar"
 
 /* ================== STORAGE ================== */
 const LS_KEY = "cookie_prefs_v1"
 
 type Category = "Genel" | "Zorunlu" | "Analitik" | "Tercih" | "Pazarlama" | "Üçüncü Taraf"
-
 type ConsentKey = "necessary" | "analytics" | "preferences" | "marketing"
 
 type ConsentState = {
@@ -36,7 +32,7 @@ type ConsentState = {
   analytics: boolean
   preferences: boolean
   marketing: boolean
-  updatedAt: string // display
+  updatedAt: string
 }
 
 function safeJsonParse<T>(raw: string | null, fallback: T): T {
@@ -66,11 +62,16 @@ function loadPrefs(): ConsentState {
     marketing: false,
     updatedAt: nowTR(),
   }
-  const parsed = safeJsonParse<Partial<ConsentState>>(typeof window !== "undefined" ? localStorage.getItem(LS_KEY) : null, {})
+
+  const parsed = safeJsonParse<Partial<ConsentState>>(
+    typeof window !== "undefined" ? localStorage.getItem(LS_KEY) : null,
+    {}
+  )
+
   return {
     ...fallback,
     ...parsed,
-    necessary: true, // always true
+    necessary: true,
   }
 }
 
@@ -100,6 +101,7 @@ function PillLink({
       : variant === "secondary"
       ? "bg-emerald-500 text-white shadow-sm hover:bg-emerald-400 focus:ring-emerald-200/70"
       : "border border-white/10 bg-white/10 text-white/85 shadow-sm backdrop-blur hover:bg-white/15 focus:ring-white/15"
+
   return (
     <Link href={href} className={cx(base, styles)}>
       {children}
@@ -126,6 +128,7 @@ function PillButton({
       : variant === "secondary"
       ? "bg-emerald-500 text-white shadow-sm hover:bg-emerald-400 focus:ring-emerald-200/70"
       : "border border-white/10 bg-white/10 text-white/85 shadow-sm backdrop-blur hover:bg-white/15 focus:ring-white/15"
+
   return (
     <button type="button" onClick={onClick} disabled={disabled} className={cx(base, styles)}>
       {children}
@@ -155,15 +158,15 @@ function CategoryDropdown({
   }, [])
 
   return (
-    <div ref={ref} className="relative">
+    <div ref={ref} className="relative w-full sm:w-auto">
       <div className="mb-1 text-[11px] font-light text-white/55">Kategori</div>
       <button
         type="button"
         onClick={() => setOpen((s) => !s)}
-        className="flex h-[46px] min-w-[220px] items-center justify-between gap-2 rounded-2xl border border-white/10 bg-white/10 px-4 text-sm text-white/90 shadow-sm backdrop-blur hover:bg-white/15 focus:outline-none focus:ring-4 focus:ring-white/10"
+        className="flex h-[46px] w-full min-w-0 items-center justify-between gap-2 rounded-2xl border border-white/10 bg-white/10 px-4 text-sm text-white/90 shadow-sm backdrop-blur hover:bg-white/15 focus:outline-none focus:ring-4 focus:ring-white/10 sm:min-w-[220px]"
       >
         <span className="truncate">{value}</span>
-        <ChevronDown className={cx("h-4 w-4 text-white/70 transition", open && "rotate-180")} />
+        <ChevronDown className={cx("h-4 w-4 shrink-0 text-white/70 transition", open && "rotate-180")} />
       </button>
 
       {open ? (
@@ -179,7 +182,7 @@ function CategoryDropdown({
                 }}
                 className={cx(
                   "w-full rounded-xl px-3 py-2 text-left text-sm",
-                  opt === value ? "bg-white/10 text-white" : "hover:bg-white/5 text-white/85"
+                  opt === value ? "bg-white/10 text-white" : "text-white/85 hover:bg-white/5"
                 )}
               >
                 {opt}
@@ -209,14 +212,16 @@ function Switch({
       onClick={() => onChange(!checked)}
       className={cx(
         "relative h-7 w-12 rounded-full border transition focus:outline-none focus:ring-4 disabled:cursor-not-allowed",
-        checked ? "bg-emerald-500/80 border-emerald-300/30 focus:ring-emerald-200/20" : "bg-white/10 border-white/10 focus:ring-white/10",
+        checked
+          ? "border-emerald-300/30 bg-emerald-500/80 focus:ring-emerald-200/20"
+          : "border-white/10 bg-white/10 focus:ring-white/10",
         disabled && "opacity-60"
       )}
       aria-pressed={checked}
     >
       <span
         className={cx(
-          "absolute top-1/2 -translate-y-1/2 h-5 w-5 rounded-full bg-white shadow transition",
+          "absolute top-1/2 h-5 w-5 -translate-y-1/2 rounded-full bg-white shadow transition",
           checked ? "left-[26px]" : "left-[4px]"
         )}
       />
@@ -248,12 +253,12 @@ function Card({
   const locked = !!item.locked
 
   return (
-    <div className="relative overflow-hidden rounded-[26px] border border-white/10 bg-white/5 p-5 shadow-[0_22px_80px_-60px_rgba(0,0,0,0.80)] backdrop-blur">
+    <div className="relative overflow-hidden rounded-[22px] border border-white/10 bg-white/5 p-4 shadow-[0_22px_80px_-60px_rgba(0,0,0,0.80)] backdrop-blur sm:rounded-[26px] sm:p-5">
       <div className="pointer-events-none absolute inset-0 opacity-55 [background-image:radial-gradient(circle_at_15%_20%,rgba(99,102,241,0.22),transparent_55%),radial-gradient(circle_at_85%_20%,rgba(16,185,129,0.16),transparent_55%),radial-gradient(circle_at_50%_120%,rgba(249,115,22,0.12),transparent_55%)]" />
       <div className="pointer-events-none absolute inset-0 opacity-[0.18] [background-image:linear-gradient(to_right,rgba(255,255,255,0.08)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.08)_1px,transparent_1px)] [background-size:28px_28px]" />
 
-      <div className="relative flex items-start justify-between gap-3">
-        <div className="min-w-0">
+      <div className="relative flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
             <span className="inline-flex items-center rounded-full border border-white/10 bg-white/10 px-2.5 py-1 text-[11px] font-semibold text-white/90">
               {item.category}
@@ -268,7 +273,9 @@ function Card({
               <span
                 className={cx(
                   "inline-flex items-center gap-2 rounded-full border px-2.5 py-1 text-[11px] font-semibold",
-                  enabled ? "border-emerald-400/25 bg-emerald-400/10 text-emerald-100" : "border-white/10 bg-white/10 text-white/70"
+                  enabled
+                    ? "border-emerald-400/25 bg-emerald-400/10 text-emerald-100"
+                    : "border-white/10 bg-white/10 text-white/70"
                 )}
               >
                 {enabled ? <CheckCircle2 className="h-3.5 w-3.5" /> : <XCircle className="h-3.5 w-3.5" />}
@@ -277,13 +284,15 @@ function Card({
             ) : null}
           </div>
 
-          <div className="mt-3 text-[18px] font-semibold leading-snug tracking-tight text-white">{item.title}</div>
+          <div className="mt-3 text-[17px] font-semibold leading-snug tracking-tight text-white sm:text-[18px]">
+            {item.title}
+          </div>
           <div className="mt-2 text-sm leading-relaxed text-white/70">{item.desc}</div>
 
           <ul className="mt-4 space-y-2 text-sm text-white/70">
             {item.bullets.map((b, i) => (
               <li key={i} className="flex items-start gap-2">
-                <span className="mt-0.5 inline-flex h-5 w-5 items-center justify-center rounded-full bg-emerald-500/15 text-emerald-200">
+                <span className="mt-0.5 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-500/15 text-emerald-200">
                   ✓
                 </span>
                 <span>{b}</span>
@@ -292,7 +301,7 @@ function Card({
           </ul>
         </div>
 
-        <div className="flex flex-col items-end gap-3">
+        <div className="flex items-center justify-between gap-3 sm:flex-col sm:items-end">
           <span className="relative inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/10 bg-white/10 text-white/85">
             {item.icon}
           </span>
@@ -315,14 +324,15 @@ type ToastState = { open: boolean; kind: ToastKind; title: string; desc?: string
 
 function Toast({ state, onClose }: { state: ToastState; onClose: () => void }) {
   if (!state.open) return null
+
   const base =
-    "fixed z-[100] bottom-4 right-4 w-[360px] max-w-[calc(100vw-32px)] rounded-2xl border shadow-[0_16px_60px_rgba(15,23,42,0.22)] backdrop-blur-xl overflow-hidden"
+    "fixed bottom-4 right-4 z-[100] w-[calc(100vw-32px)] max-w-[360px] overflow-hidden rounded-2xl border shadow-[0_16px_60px_rgba(15,23,42,0.22)] backdrop-blur-xl sm:w-[360px]"
   const style =
     state.kind === "success"
-      ? "bg-emerald-600 text-white border-emerald-500/30"
+      ? "border-emerald-500/30 bg-emerald-600 text-white"
       : state.kind === "error"
-      ? "bg-rose-600 text-white border-rose-500/30"
-      : "bg-slate-900 text-white border-white/10"
+      ? "border-rose-500/30 bg-rose-600 text-white"
+      : "border-white/10 bg-slate-900 text-white"
 
   return (
     <div className={cx(base, style)}>
@@ -334,7 +344,7 @@ function Toast({ state, onClose }: { state: ToastState; onClose: () => void }) {
           </div>
           <button
             onClick={onClose}
-            className="shrink-0 rounded-xl bg-white/10 hover:bg-white/15 px-2 py-1 text-xs font-semibold"
+            className="shrink-0 rounded-xl bg-white/10 px-2 py-1 text-xs font-semibold hover:bg-white/15"
             aria-label="Kapat"
           >
             Kapat
@@ -347,8 +357,6 @@ function Toast({ state, onClose }: { state: ToastState; onClose: () => void }) {
 
 /* ================== PAGE ================== */
 export default function Page() {
-  const router = useRouter()
-
   const [prefs, setPrefs] = useState<ConsentState>(() => ({
     necessary: true,
     analytics: false,
@@ -358,15 +366,14 @@ export default function Page() {
   }))
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setPrefs(loadPrefs())
   }, [])
 
-  // query controls
   const [category, setCategory] = useState<Category | "Tümü">("Tümü")
   const [q, setQ] = useState("")
   const searchRef = useRef<HTMLInputElement | null>(null)
 
-  // ⌘K / Ctrl+K focus search
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       const isMac = navigator.platform.toLowerCase().includes("mac")
@@ -379,9 +386,9 @@ export default function Page() {
     return () => window.removeEventListener("keydown", onKey)
   }, [])
 
-  // Toast
   const [toast, setToast] = useState<ToastState>({ open: false, kind: "info", title: "" })
   const toastTimer = useRef<number | null>(null)
+
   function showToast(kind: ToastKind, title: string, desc?: string, ms = 3200) {
     setToast({ open: true, kind, title, desc })
     if (toastTimer.current) window.clearTimeout(toastTimer.current)
@@ -396,7 +403,11 @@ export default function Page() {
         title: "Çerez tercihlerini yönet",
         desc:
           "Aşağıdaki seçeneklerle hangi çerez türlerine izin verdiğini belirleyebilirsin. Zorunlu çerezler siteyi çalıştırmak için gereklidir.",
-        bullets: ["Tercihler cihazında saklanır (localStorage).", "İstediğin zaman güncelleyebilirsin.", "Detay: Çerez Politikası sayfasında."],
+        bullets: [
+          "Tercihler cihazında saklanır (localStorage).",
+          "İstediğin zaman güncelleyebilirsin.",
+          "Detay: Çerez Politikası sayfasında.",
+        ],
         icon: <Cookie className="h-4 w-4" />,
       },
       {
@@ -413,14 +424,14 @@ export default function Page() {
         category: "Analitik",
         title: "Analitik çerezleri",
         desc: "Ürün performansını ölçmemize ve hataları anlamamıza yardımcı olur (tercihe bağlı).",
-        bullets: ["Sayfa performansı", "Anonim istatistikler", "Hata/çökme analizi (varsa)"],
+        bullets: ["Sayfa performansı", "Anonim istatistikler", "Hata / çökme analizi (varsa)"],
         icon: <BarChart3 className="h-4 w-4" />,
       },
       {
         key: "preferences",
         category: "Tercih",
         title: "Tercih çerezleri",
-        desc: "Tema/dil gibi kişiselleştirmeleri hatırlamak için kullanılır (tercihe bağlı).",
+        desc: "Tema / dil gibi kişiselleştirmeleri hatırlamak için kullanılır (tercihe bağlı).",
         bullets: ["Tema", "Dil", "UI seçimleri"],
         icon: <Settings className="h-4 w-4" />,
       },
@@ -436,10 +447,14 @@ export default function Page() {
     []
   )
 
-  const categories = useMemo<Category[]>(() => ["Genel", "Zorunlu", "Analitik", "Tercih", "Pazarlama", "Üçüncü Taraf"], [])
+  const categories = useMemo<Category[]>(
+    () => ["Genel", "Zorunlu", "Analitik", "Tercih", "Pazarlama", "Üçüncü Taraf"],
+    []
+  )
 
   const filtered = useMemo(() => {
     const qq = q.trim().toLowerCase()
+
     return cards.filter((it) => {
       const catOk = category === "Tümü" ? true : it.category === category
       const qOk =
@@ -448,6 +463,7 @@ export default function Page() {
         it.desc.toLowerCase().includes(qq) ||
         it.category.toLowerCase().includes(qq) ||
         it.bullets.some((b) => b.toLowerCase().includes(qq))
+
       return catOk && qOk
     })
   }, [cards, category, q])
@@ -464,8 +480,13 @@ export default function Page() {
   }
 
   const changed = useMemo(() => {
-    const saved = safeJsonParse<ConsentState | null>(typeof window !== "undefined" ? localStorage.getItem(LS_KEY) : null, null)
+    const saved = safeJsonParse<ConsentState | null>(
+      typeof window !== "undefined" ? localStorage.getItem(LS_KEY) : null,
+      null
+    )
+
     if (!saved) return true
+
     return (
       saved.analytics !== prefs.analytics ||
       saved.preferences !== prefs.preferences ||
@@ -491,16 +512,19 @@ export default function Page() {
     score === 0 ? "Sadece Zorunlu" : score === 1 ? "Minimum" : score === 2 ? "Dengeli" : "Tümü Açık"
 
   return (
-    <div className="relative min-h-screen bg-[#0B1020] text-slate-100">
+    <div className="relative min-h-screen overflow-x-hidden bg-[#0B1020] text-slate-100">
       <Toast state={toast} onClose={() => setToast((t) => ({ ...t, open: false }))} />
 
-      {/* GLOBAL KEYFRAMES */}
       <style jsx global>{`
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .no-scrollbar::-webkit-scrollbar {
+          display: none;
+        }
+        .no-scrollbar {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
       `}</style>
 
-      {/* BG */}
       <div className="pointer-events-none fixed inset-0 -z-10">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_10%,rgba(99,102,241,0.22),transparent_45%),radial-gradient(circle_at_80%_20%,rgba(16,185,129,0.20),transparent_40%),radial-gradient(circle_at_50%_90%,rgba(249,115,22,0.16),transparent_50%)]" />
         <div
@@ -516,45 +540,39 @@ export default function Page() {
         <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/60" />
       </div>
 
-      {/* TOP BAND */}
       <div className="border-b border-white/10 bg-[#1F2333] text-white">
-        <div className="mx-auto flex w-full max-w-screen-2xl items-center justify-between gap-3 px-6 py-2.5 lg:px-10 2xl:px-14">
+        <div className="mx-auto flex w-full max-w-screen-2xl flex-col gap-1 px-4 py-2.5 sm:flex-row sm:items-center sm:justify-between sm:gap-3 sm:px-6 lg:px-10 2xl:px-14">
           <div className="text-sm">
             Çerez Tercihleri • <span className="ml-2 text-white/70">kontrol sende</span>
           </div>
-          <div className="hidden items-center gap-2 text-sm text-white/80 sm:flex">
+          <div className="text-sm text-white/80">
             Kısayol: <span className="font-semibold text-white">⌘K / Ctrl+K</span> → Ara
           </div>
         </div>
       </div>
 
-<PublicTopbar
-  subtitle="Sorunlar"
-  showSearchStub={false} // istersen true (detay sayfasında input stub)
-  nextUrlForAuth="/sikayetler" // ya da mevcut sayfa path’in
-/>
+      <PublicTopbar subtitle="Sorunlar" showSearchStub={false} nextUrlForAuth="/sikayetler" />
 
-
-      <main className="mx-auto w-full max-w-screen-2xl px-6 pb-16 lg:px-10 2xl:px-14">
-        {/* HEADER */}
-        <section className="pt-8">
+      <main className="mx-auto w-full max-w-screen-2xl px-4 pb-16 sm:px-6 lg:px-10 2xl:px-14">
+        <section className="pt-6 sm:pt-8">
           <div className="flex flex-col items-start justify-between gap-5 md:flex-row md:items-end">
             <div>
-              <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/10 px-3 py-1.5 text-[12px] text-white/85 shadow-sm backdrop-blur">
+              <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/10 px-3 py-1.5 text-[11px] text-white/85 shadow-sm backdrop-blur sm:text-[12px]">
                 <span className="h-2 w-2 rounded-full bg-emerald-400" />
                 Zorunlu • Analitik • Tercih • Pazarlama
               </div>
-              <h1 className="mt-4 text-[36px] font-semibold tracking-tight text-white md:text-[44px]">
+
+              <h1 className="mt-4 text-[30px] font-semibold tracking-tight text-white sm:text-[36px] md:text-[44px]">
                 Çerez Tercihleri
               </h1>
+
               <p className="mt-2 max-w-2xl text-sm leading-relaxed text-white/70">
                 Hangi çerez türlerine izin verdiğini seç. Zorunlu çerezler kapatılamaz.
               </p>
             </div>
 
-            <div className="flex w-full flex-col gap-3 sm:flex-row sm:items-end md:w-auto">
-              {/* search */}
-              <div className="w-full sm:w-[380px]">
+            <div className="flex w-full flex-col gap-3 md:w-auto md:flex-row md:items-end">
+              <div className="w-full md:w-[340px] lg:w-[380px]">
                 <div className="mb-1 text-[11px] font-light text-white/55">Ara</div>
                 <div className="flex items-center overflow-hidden rounded-2xl border border-white/10 bg-white/10 shadow-sm backdrop-blur">
                   <div className="px-4 text-white/70">
@@ -570,59 +588,63 @@ export default function Page() {
                 </div>
               </div>
 
-              <div className="flex items-end gap-3">
+              <div className="w-full md:w-auto">
                 <CategoryDropdown value={category} onChange={setCategory} categories={categories} />
               </div>
             </div>
           </div>
 
-          {/* CTA BAR */}
-          <div className="mt-6 flex flex-wrap items-center justify-between gap-3 rounded-[24px] border border-white/10 bg-white/5 px-5 py-4 backdrop-blur">
-            <div className="flex items-center gap-2 text-xs text-white/65">
-              <Shield className="h-4 w-4 text-emerald-300" />
-              Son kayıt: <span className="font-semibold text-white/80">{prefs.updatedAt}</span> • Profil:{" "}
-              <span className="font-semibold text-white/80">{label}</span>
-            </div>
+          <div className="mt-6 rounded-[20px] border border-white/10 bg-white/5 px-4 py-4 backdrop-blur sm:rounded-[24px] sm:px-5">
+            <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+              <div className="flex flex-wrap items-center gap-2 text-xs text-white/65">
+                <Shield className="h-4 w-4 text-emerald-300" />
+                <span>
+                  Son kayıt: <span className="font-semibold text-white/80">{prefs.updatedAt}</span>
+                </span>
+                <span className="hidden sm:inline">•</span>
+                <span>
+                  Profil: <span className="font-semibold text-white/80">{label}</span>
+                </span>
+              </div>
 
-            <div className="flex flex-wrap items-center gap-2">
-              <PillButton
-                variant="ghost"
-                onClick={() => {
-                  setAll(false)
-                  showToast("info", "Tümünü reddet", "Sadece zorunlu çerezler açık.")
-                }}
-              >
-                <XCircle className="h-4 w-4" />
-                Tümünü Reddet
-              </PillButton>
+              <div className="flex flex-wrap items-center gap-2">
+                <PillButton
+                  variant="ghost"
+                  onClick={() => {
+                    setAll(false)
+                    showToast("info", "Tümünü reddet", "Sadece zorunlu çerezler açık.")
+                  }}
+                >
+                  <XCircle className="h-4 w-4" />
+                  Tümünü Reddet
+                </PillButton>
 
-              <PillButton
-                variant="ghost"
-                onClick={() => {
-                  setAll(true)
-                  showToast("info", "Tümünü kabul et", "Analitik + Tercih + Pazarlama açıldı.")
-                }}
-              >
-                <CheckCircle2 className="h-4 w-4" />
-                Tümünü Kabul Et
-              </PillButton>
+                <PillButton
+                  variant="ghost"
+                  onClick={() => {
+                    setAll(true)
+                    showToast("info", "Tümünü kabul et", "Analitik + Tercih + Pazarlama açıldı.")
+                  }}
+                >
+                  <CheckCircle2 className="h-4 w-4" />
+                  Tümünü Kabul Et
+                </PillButton>
 
-              <PillButton variant="secondary" onClick={save} disabled={!changed}>
-                <BadgeCheck className="h-4 w-4" />
-                Kaydet
-                <ArrowRight className="h-4 w-4" />
-              </PillButton>
+                <PillButton variant="secondary" onClick={save} disabled={!changed}>
+                  <BadgeCheck className="h-4 w-4" />
+                  Kaydet
+                  <ArrowRight className="h-4 w-4" />
+                </PillButton>
+              </div>
             </div>
           </div>
         </section>
 
-        {/* MAIN GRID */}
         <section className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-12">
-          {/* LEFT */}
           <div className="lg:col-span-8">
             {filtered.length === 0 ? (
-              <div className="rounded-[28px] border border-white/10 bg-white/5 p-10 text-center text-white/70 backdrop-blur">
-                Sonuç bulunamadı. Arama/filtreyi değiştirip tekrar dene.
+              <div className="rounded-[24px] border border-white/10 bg-white/5 p-8 text-center text-white/70 backdrop-blur sm:rounded-[28px] sm:p-10">
+                Sonuç bulunamadı. Arama / filtreyi değiştirip tekrar dene.
               </div>
             ) : (
               <div className="grid grid-cols-1 gap-5">
@@ -653,7 +675,7 @@ export default function Page() {
               </div>
             )}
 
-            <div className="mt-8 rounded-[26px] border border-white/10 bg-white/5 p-5 backdrop-blur">
+            <div className="mt-8 rounded-[22px] border border-white/10 bg-white/5 p-4 backdrop-blur sm:rounded-[26px] sm:p-5">
               <div className="flex items-start justify-between gap-3">
                 <div>
                   <div className="text-sm font-semibold text-white/90">Detay</div>
@@ -661,7 +683,7 @@ export default function Page() {
                     Hangi çerezlerin kullanıldığı / sağlayıcı listesi için “Çerez Politikası” sayfasına bakabilirsin.
                   </div>
                 </div>
-                <div className="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-white/10 bg-white/10">
+                <div className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-white/10 bg-white/10">
                   <Info className="h-5 w-5 text-indigo-200" />
                 </div>
               </div>
@@ -681,10 +703,9 @@ export default function Page() {
             </div>
           </div>
 
-          {/* RIGHT */}
           <div className="lg:col-span-4">
-            <div className="sticky top-[96px] space-y-5">
-              <div className="rounded-[30px] border border-white/10 bg-white/5 p-6 shadow-[0_30px_110px_-80px_rgba(0,0,0,0.85)] backdrop-blur">
+            <div className="space-y-5 lg:sticky lg:top-[96px]">
+              <div className="rounded-[24px] border border-white/10 bg-white/5 p-5 shadow-[0_30px_110px_-80px_rgba(0,0,0,0.85)] backdrop-blur sm:rounded-[30px] sm:p-6">
                 <div className="flex items-start justify-between gap-3">
                   <div>
                     <div className="text-sm font-semibold text-white/90">Seçim özeti</div>
@@ -706,8 +727,8 @@ export default function Page() {
                       key={x.t}
                       className="flex items-center justify-between gap-3 rounded-2xl border border-white/10 bg-black/20 p-4"
                     >
-                      <div className="flex items-center gap-3">
-                        <span className="inline-flex h-9 w-9 items-center justify-center rounded-2xl border border-white/10 bg-white/10 text-white/85">
+                      <div className="flex min-w-0 items-center gap-3">
+                        <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl border border-white/10 bg-white/10 text-white/85">
                           {x.i}
                         </span>
                         <div className="text-sm font-semibold text-white/85">{x.t}</div>
@@ -715,8 +736,10 @@ export default function Page() {
 
                       <span
                         className={cx(
-                          "inline-flex items-center gap-2 rounded-full border px-2.5 py-1 text-[11px] font-semibold",
-                          x.v ? "border-emerald-400/25 bg-emerald-400/10 text-emerald-100" : "border-white/10 bg-white/10 text-white/70"
+                          "inline-flex shrink-0 items-center gap-2 rounded-full border px-2.5 py-1 text-[11px] font-semibold",
+                          x.v
+                            ? "border-emerald-400/25 bg-emerald-400/10 text-emerald-100"
+                            : "border-white/10 bg-white/10 text-white/70"
                         )}
                       >
                         {x.v ? <CheckCircle2 className="h-3.5 w-3.5" /> : <XCircle className="h-3.5 w-3.5" />}
@@ -745,9 +768,9 @@ export default function Page() {
                 </div>
               </div>
 
-              <div className="rounded-[30px] border border-white/10 bg-white/5 p-6 backdrop-blur">
+              <div className="rounded-[24px] border border-white/10 bg-white/5 p-5 backdrop-blur sm:rounded-[30px] sm:p-6">
                 <div className="flex items-start gap-3">
-                  <div className="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-white/10 bg-white/10">
+                  <div className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-white/10 bg-white/10">
                     <Info className="h-5 w-5 text-indigo-200" />
                   </div>
                   <div>
@@ -759,7 +782,7 @@ export default function Page() {
                 </div>
               </div>
 
-              <div className="rounded-[30px] border border-white/10 bg-white/5 p-6 backdrop-blur">
+              <div className="rounded-[24px] border border-white/10 bg-white/5 p-5 backdrop-blur sm:rounded-[30px] sm:p-6">
                 <div className="text-sm font-semibold text-white/90">Kısayollar</div>
                 <div className="mt-3 flex flex-col gap-2">
                   <PillButton variant="ghost" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>
@@ -777,12 +800,11 @@ export default function Page() {
           </div>
         </section>
 
-        {/* BOTTOM NAV */}
         <div className="mt-10 flex flex-col items-start justify-between gap-3 border-t border-white/10 pt-6 md:flex-row md:items-center">
           <div className="text-xs text-white/60">
             Tercihlerin cihazında saklanır. (LS: <span className="font-semibold text-white/75">{LS_KEY}</span>)
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <PillLink href="/cerez-politikasi" variant="ghost">
               Çerez Politikası
             </PillLink>

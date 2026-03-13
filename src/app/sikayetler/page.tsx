@@ -254,6 +254,7 @@ function CategoryDropdown({
   const items = [{ id: null, name: "Tümü" as const }, ...options]
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true)
   }, [])
 
@@ -393,6 +394,7 @@ function SortDropdown({ value, onChange }: { value: SortKey; onChange: (v: SortK
   const label = value === "new" ? "En Yeni" : value === "views" ? "En Çok Görüntülenen" : "En Çok Yorumlanan"
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true)
   }, [])
 

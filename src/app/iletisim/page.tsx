@@ -21,10 +21,10 @@ import {
   Shield,
   Sparkles,
   Users,
+  Loader2,
 } from "lucide-react"
 
 import Footer from "@/components/Footer"
-
 import PublicTopbar from "@/components/PublicTopbar"
 
 type Topic =
@@ -194,14 +194,17 @@ export default function Page() {
   const [sent, setSent] = useState(false)
   const [sending, setSending] = useState(false)
 
-  const canSend = name.trim().length >= 2 && email.includes("@") && message.trim().length >= 10 && consent
+  const canSend =
+    name.trim().length >= 2 &&
+    email.includes("@") &&
+    message.trim().length >= 10 &&
+    consent
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!canSend) return
-    setSending(true)
 
-    // ✅ Şimdilik demo: backend yok. İleride /api/contact gibi endpoint’e POST bağlarız.
+    setSending(true)
     await new Promise((r) => setTimeout(r, 650))
 
     setSending(false)
@@ -213,8 +216,7 @@ export default function Page() {
   }
 
   return (
-    <div className="relative min-h-screen bg-[#0B1020] text-slate-100">
-      {/* 🌌 GLOBAL DARK GRID BACKGROUND */}
+    <div className="relative min-h-screen overflow-x-hidden bg-[#0B1020] text-slate-100">
       <div className="pointer-events-none fixed inset-0 -z-10">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_10%,rgba(99,102,241,0.22),transparent_45%),radial-gradient(circle_at_80%_20%,rgba(16,185,129,0.20),transparent_40%),radial-gradient(circle_at_50%_90%,rgba(249,115,22,0.16),transparent_50%)]" />
         <div
@@ -230,26 +232,25 @@ export default function Page() {
         <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/60" />
       </div>
 
-      {/* TOP INFO BAND */}
       <div className="border-b border-white/10 bg-[#1F2333] text-white">
-        <div className="mx-auto flex w-full max-w-screen-2xl items-center justify-between gap-3 px-6 py-2.5 lg:px-10 2xl:px-14">
+        <div className="mx-auto flex w-full max-w-screen-2xl flex-col gap-2 px-4 py-2.5 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-10 2xl:px-14">
           <div className="text-sm">
             İletişim • <span className="ml-2 text-white/70">Destek ve geri bildirim</span>
           </div>
-          <div className="hidden items-center gap-2 text-sm text-white/80 sm:flex">
-            Hızlı yardım → <span className="font-semibold text-white">SSS</span> &nbsp;•&nbsp; <span className="font-semibold text-white">Kurallar</span>
+          <div className="text-sm text-white/80">
+            Hızlı yardım → <span className="font-semibold text-white">SSS</span> •{" "}
+            <span className="font-semibold text-white">Kurallar</span>
           </div>
         </div>
       </div>
 
       <PublicTopbar
-        subtitle="Sorunlar"
-        showSearchStub={false} // istersen true (detay sayfasında input stub)
-        nextUrlForAuth="/sikayetler" // ya da mevcut sayfa path’in
+        subtitle="İletişim"
+        showSearchStub={false}
+        nextUrlForAuth="/iletisim"
       />
 
-      <main className="mx-auto w-full max-w-screen-2xl px-6 pb-16 pt-8 lg:px-10 2xl:px-14">
-        {/* BREADCRUMB + META */}
+      <main className="mx-auto w-full max-w-screen-2xl px-4 pb-16 pt-6 sm:px-6 sm:pt-8 lg:px-10 2xl:px-14">
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <button
             type="button"
@@ -267,29 +268,30 @@ export default function Page() {
           </div>
         </div>
 
-        {/* HERO */}
         <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-12">
           <div className="lg:col-span-7">
-            <div className="relative overflow-hidden rounded-[34px] border border-white/10 bg-white/5 p-7 shadow-[0_35px_120px_-90px_rgba(0,0,0,0.85)] backdrop-blur">
+            <div className="relative overflow-hidden rounded-[24px] border border-white/10 bg-white/5 p-5 shadow-[0_35px_120px_-90px_rgba(0,0,0,0.85)] backdrop-blur sm:rounded-[34px] sm:p-7">
               <div className="pointer-events-none absolute inset-0 opacity-70 [background-image:radial-gradient(circle_at_15%_15%,rgba(99,102,241,0.28),transparent_50%),radial-gradient(circle_at_85%_35%,rgba(16,185,129,0.20),transparent_55%),radial-gradient(circle_at_50%_120%,rgba(249,115,22,0.16),transparent_55%)]" />
               <div className="pointer-events-none absolute inset-0 opacity-[0.20] [background-image:linear-gradient(to_right,rgba(255,255,255,0.08)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.08)_1px,transparent_1px)] [background-size:28px_28px]" />
 
               <div className="relative">
-                <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/10 px-3 py-1.5 text-[12px] text-white/85 shadow-sm backdrop-blur">
+                <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/10 px-3 py-1.5 text-[11px] text-white/85 shadow-sm backdrop-blur sm:text-[12px]">
                   <span className="h-2 w-2 rounded-full bg-emerald-400" />
                   Yardım & İletişim
                 </div>
 
-                <h1 className="mt-4 text-[34px] font-extrabold leading-[1.08] tracking-tight text-white md:text-[44px]">
+                <h1 className="mt-4 text-[30px] font-extrabold leading-[1.08] tracking-tight text-white sm:text-[34px] md:text-[44px]">
                   Bize Ulaş
                 </h1>
 
                 <p className="mt-3 max-w-2xl text-sm leading-relaxed text-white/70">
                   Geri bildirim, teknik sorun, moderasyon talebi veya iş birliği… doğru başlığı seç ve mesajını bırak.
-                  <span className="ml-2 text-white/60">Demo moddayız; gönderim şimdilik simüle edilir.</span>
+                  <span className="ml-2 text-white/60">
+                    Demo moddayız; gönderim şimdilik simüle edilir.
+                  </span>
                 </p>
 
-                <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center">
+                <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
                   <PillButton variant="secondary" onClick={goFaq}>
                     <HelpCircle className="h-4 w-4" />
                     SSS
@@ -306,11 +308,12 @@ export default function Page() {
 
                 <div className="mt-5 rounded-2xl border border-white/10 bg-black/20 p-4 text-xs text-white/60">
                   <div className="flex items-start gap-2">
-                    <Users className="mt-0.5 h-4 w-4 text-emerald-300" />
+                    <Users className="mt-0.5 h-4 w-4 shrink-0 text-emerald-300" />
                     <div>
                       <div className="font-semibold text-white/80">İpucu</div>
                       <div className="mt-1">
-                        Sorun içeriğiyle ilgili bir konuysa önce <span className="text-white/80">Kurallar</span> ve{" "}
+                        Sorun içeriğiyle ilgili bir konuysa önce{" "}
+                        <span className="text-white/80">Kurallar</span> ve{" "}
                         <span className="text-white/80">Rehber</span>’e bakmak işleri hızlandırır.
                       </div>
                     </div>
@@ -320,7 +323,7 @@ export default function Page() {
                 {sent ? (
                   <div className="mt-5 rounded-2xl border border-emerald-400/25 bg-emerald-400/10 p-4 text-sm text-white/80">
                     <div className="flex items-start gap-2">
-                      <BadgeCheck className="mt-0.5 h-4 w-4 text-emerald-300" />
+                      <BadgeCheck className="mt-0.5 h-4 w-4 shrink-0 text-emerald-300" />
                       <div>
                         <div className="font-semibold text-white">Mesajın alındı (demo) 🎉</div>
                         <div className="mt-1 text-white/70">
@@ -335,9 +338,8 @@ export default function Page() {
           </div>
 
           <div className="lg:col-span-5">
-            <div className="sticky top-[96px] space-y-5">
-              {/* Contact cards */}
-              <div className="rounded-[30px] border border-white/10 bg-white/5 p-6 shadow-[0_30px_110px_-80px_rgba(0,0,0,0.85)] backdrop-blur">
+            <div className="space-y-5 lg:sticky lg:top-[96px]">
+              <div className="rounded-[24px] border border-white/10 bg-white/5 p-5 shadow-[0_30px_110px_-80px_rgba(0,0,0,0.85)] backdrop-blur sm:rounded-[30px] sm:p-6">
                 <div className="flex items-start justify-between gap-3">
                   <div>
                     <div className="text-sm font-semibold text-white/90">Hızlı iletişim</div>
@@ -349,10 +351,10 @@ export default function Page() {
                 </div>
 
                 <div className="mt-4 space-y-3">
-                  <div className="flex items-center justify-between rounded-2xl border border-white/10 bg-black/20 px-4 py-3">
-                    <div className="flex items-center gap-2 text-sm text-white/85">
-                      <Mail className="h-4 w-4" />
-                      support@deneyim.app
+                  <div className="flex items-center justify-between gap-3 rounded-2xl border border-white/10 bg-black/20 px-4 py-3">
+                    <div className="min-w-0 flex items-center gap-2 text-sm text-white/85">
+                      <Mail className="h-4 w-4 shrink-0" />
+                      <span className="truncate">support@deneyim.app</span>
                     </div>
                     <IconCircleButton
                       aria-label="Kopyala"
@@ -363,20 +365,20 @@ export default function Page() {
                     </IconCircleButton>
                   </div>
 
-                  <div className="flex items-center justify-between rounded-2xl border border-white/10 bg-black/20 px-4 py-3">
-                    <div className="flex items-center gap-2 text-sm text-white/85">
-                      <Phone className="h-4 w-4" />
-                      +90 (212) 000 00 00
+                  <div className="flex items-center justify-between gap-3 rounded-2xl border border-white/10 bg-black/20 px-4 py-3">
+                    <div className="min-w-0 flex items-center gap-2 text-sm text-white/85">
+                      <Phone className="h-4 w-4 shrink-0" />
+                      <span className="truncate">+90 (212) 000 00 00</span>
                     </div>
-                    <div className="text-xs text-white/50">Yakında</div>
+                    <div className="shrink-0 text-xs text-white/50">Yakında</div>
                   </div>
 
-                  <div className="flex items-center justify-between rounded-2xl border border-white/10 bg-black/20 px-4 py-3">
-                    <div className="flex items-center gap-2 text-sm text-white/85">
-                      <MapPin className="h-4 w-4" />
-                      İstanbul • Türkiye
+                  <div className="flex items-center justify-between gap-3 rounded-2xl border border-white/10 bg-black/20 px-4 py-3">
+                    <div className="min-w-0 flex items-center gap-2 text-sm text-white/85">
+                      <MapPin className="h-4 w-4 shrink-0" />
+                      <span className="truncate">İstanbul • Türkiye</span>
                     </div>
-                    <div className="text-xs text-white/50">Merkez</div>
+                    <div className="shrink-0 text-xs text-white/50">Merkez</div>
                   </div>
                 </div>
 
@@ -385,8 +387,7 @@ export default function Page() {
                 </div>
               </div>
 
-              {/* Quick actions */}
-              <div className="rounded-[30px] border border-white/10 bg-white/5 p-6 backdrop-blur">
+              <div className="rounded-[24px] border border-white/10 bg-white/5 p-5 backdrop-blur sm:rounded-[30px] sm:p-6">
                 <div className="text-sm font-semibold text-white/90">Hızlı aksiyon</div>
                 <div className="mt-4 space-y-3">
                   <button
@@ -430,11 +431,9 @@ export default function Page() {
           </div>
         </div>
 
-        {/* FORM + SIDE */}
         <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-12">
-          {/* Form */}
           <div className="lg:col-span-7">
-            <div className="relative overflow-hidden rounded-[30px] border border-white/10 bg-white/5 p-6 shadow-[0_30px_110px_-80px_rgba(0,0,0,0.85)] backdrop-blur">
+            <div className="relative overflow-hidden rounded-[24px] border border-white/10 bg-white/5 p-5 shadow-[0_30px_110px_-80px_rgba(0,0,0,0.85)] backdrop-blur sm:rounded-[30px] sm:p-6">
               <div className="pointer-events-none absolute inset-0 opacity-50 [background-image:radial-gradient(circle_at_20%_0%,rgba(99,102,241,0.18),transparent_45%),radial-gradient(circle_at_90%_30%,rgba(16,185,129,0.12),transparent_55%)]" />
 
               <div className="relative">
@@ -459,7 +458,12 @@ export default function Page() {
 
                     <div className="space-y-2">
                       <FieldLabel>E-posta</FieldLabel>
-                      <Input value={email} onChange={setEmail} placeholder="örn: ali@ornek.com" type="email" />
+                      <Input
+                        value={email}
+                        onChange={setEmail}
+                        placeholder="örn: ali@ornek.com"
+                        type="email"
+                      />
                     </div>
                   </div>
 
@@ -505,19 +509,15 @@ export default function Page() {
 
                   <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                     <div className="text-xs text-white/55">
-                      Demo mod: şimdilik sadece UI. Backend bağlayınca buradan mail/ticket açacağız.
+                      Demo mod: şimdilik sadece UI. Backend bağlayınca buradan mail / ticket açacağız.
                     </div>
-                    <div className="flex items-center gap-2">
+                    <div className="flex flex-wrap items-center gap-2">
                       <PillButton variant="ghost" onClick={goFaq}>
                         <HelpCircle className="h-4 w-4" />
                         SSS
                       </PillButton>
-                      <PillButton
-                        variant="primary"
-                        type="submit"
-                        disabled={!canSend || sending}
-                      >
-                        <Send className="h-4 w-4" />
+                      <PillButton variant="primary" type="submit" disabled={!canSend || sending}>
+                        {sending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
                         {sending ? "Gönderiliyor..." : "Gönder"}
                       </PillButton>
                     </div>
@@ -527,14 +527,15 @@ export default function Page() {
             </div>
           </div>
 
-          {/* Sidebar mini FAQ */}
           <div className="lg:col-span-5">
             <div className="space-y-5">
-              <div className="rounded-[30px] border border-white/10 bg-white/5 p-6 shadow-[0_30px_110px_-80px_rgba(0,0,0,0.85)] backdrop-blur">
+              <div className="rounded-[24px] border border-white/10 bg-white/5 p-5 shadow-[0_30px_110px_-80px_rgba(0,0,0,0.85)] backdrop-blur sm:rounded-[30px] sm:p-6">
                 <div className="flex items-start justify-between gap-3">
                   <div>
                     <div className="text-sm font-semibold text-white/90">Sık gelen konular</div>
-                    <div className="mt-1 text-sm text-white/65">Önce buraya bakmak zaman kazandırır.</div>
+                    <div className="mt-1 text-sm text-white/65">
+                      Önce buraya bakmak zaman kazandırır.
+                    </div>
                   </div>
                   <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-white/10">
                     <HelpCircle className="h-5 w-5 text-emerald-300" />
@@ -543,26 +544,28 @@ export default function Page() {
 
                 <div className="mt-4 space-y-3">
                   <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
-                    <div className="text-sm font-semibold text-white/85">Moderasyon talebi nasıl iletilir?</div>
+                    <div className="text-sm font-semibold text-white/85">
+                      Moderasyon talebi nasıl iletilir?
+                    </div>
                     <div className="mt-2 text-sm text-white/65">
-                      Konu: <span className="text-white/80 font-semibold">Moderasyon</span> seç. Sorun ID veya linki
-                      ekle ve kısa gerekçe yaz.
+                      Konu: <span className="font-semibold text-white/80">Moderasyon</span> seç.
+                      Sorun ID veya linki ekle ve kısa gerekçe yaz.
                     </div>
                   </div>
 
                   <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
                     <div className="text-sm font-semibold text-white/85">KVKK/Gizlilik talebi</div>
                     <div className="mt-2 text-sm text-white/65">
-                      Konu: <span className="text-white/80 font-semibold">Gizlilik & KVKK</span>. Talebini net yaz; kişisel
-                      veri paylaşma.
+                      Konu: <span className="font-semibold text-white/80">Gizlilik & KVKK</span>.
+                      Talebini net yaz; kişisel veri paylaşma.
                     </div>
                   </div>
 
                   <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
                     <div className="text-sm font-semibold text-white/85">Teknik hata bildirimi</div>
                     <div className="mt-2 text-sm text-white/65">
-                      Konu: <span className="text-white/80 font-semibold">Teknik</span>. Tarayıcı + sayfa + hata mesajını
-                      yaz (console/network varsa ekle).
+                      Konu: <span className="font-semibold text-white/80">Teknik</span>. Tarayıcı +
+                      sayfa + hata mesajını yaz.
                     </div>
                   </div>
                 </div>
@@ -583,7 +586,7 @@ export default function Page() {
                 </div>
               </div>
 
-              <div className="rounded-[30px] border border-white/10 bg-white/5 p-6 backdrop-blur">
+              <div className="rounded-[24px] border border-white/10 bg-white/5 p-5 backdrop-blur sm:rounded-[30px] sm:p-6">
                 <div className="text-sm font-semibold text-white/90">Notlar</div>
                 <ul className="mt-3 list-disc space-y-2 pl-5 text-sm text-white/65">
                   <li>Bu sayfa, sorun oluşturma sayfasının yerine geçmez.</li>
@@ -595,12 +598,11 @@ export default function Page() {
           </div>
         </div>
 
-        {/* BOTTOM */}
         <div className="mt-8 flex flex-col items-start justify-between gap-3 border-t border-white/10 pt-6 md:flex-row md:items-center">
           <div className="text-xs text-white/60">
             Not: İletişim formu demo. Prod’da backend’e bağlayıp “ticket sistemi”ne çevireceğiz.
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <PillButton variant="ghost" onClick={goHome}>
               Anasayfa
             </PillButton>

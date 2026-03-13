@@ -7,7 +7,16 @@ import React, { Suspense, useEffect, useMemo, useRef, useState } from "react"
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
 import clsx from "clsx"
-import { Mail, Lock, Eye, EyeOff, ArrowRight, ShieldCheck, AlertTriangle, Info } from "lucide-react"
+import {
+  Mail,
+  Lock,
+  Eye,
+  EyeOff,
+  ArrowRight,
+  ShieldCheck,
+  AlertTriangle,
+  Info,
+} from "lucide-react"
 import Footer from "@/components/Footer"
 import PublicTopbar from "@/components/PublicTopbar"
 
@@ -15,7 +24,12 @@ const LS_EMAIL_KEY = "auth_email_remembered_v1"
 const LS_AUTH_TOKEN_KEY = "sv_auth_token_v1"
 const LS_AUTH_USER_KEY = "sv_auth_user_v1"
 
-const API_BASE = (process.env.NEXT_PUBLIC_API_BASE || "http://localhost:3002").replace(/\/+$/, "")
+function normalizeApiBase(raw?: string) {
+  const base = (raw || "").trim().replace(/\/+$/, "")
+  return base || "http://localhost:3002"
+}
+
+const API_BASE = normalizeApiBase(process.env.NEXT_PUBLIC_API_BASE)
 
 function PillButton({
   children,
@@ -33,7 +47,7 @@ function PillButton({
   className?: string
 }) {
   const base =
-    "inline-flex items-center justify-center gap-2 rounded-full px-4 py-2.5 text-sm font-semibold transition active:scale-[0.99] focus:outline-none focus:ring-4 disabled:opacity-60 disabled:cursor-not-allowed"
+    "inline-flex items-center justify-center gap-2 rounded-full px-4 py-2.5 text-sm font-semibold transition active:scale-[0.99] focus:outline-none focus:ring-4 disabled:cursor-not-allowed disabled:opacity-60"
   const styles =
     variant === "primary"
       ? "bg-gradient-to-b from-indigo-600 to-indigo-700 text-white shadow-sm hover:from-indigo-500 hover:to-indigo-700 focus:ring-indigo-200/30"
@@ -85,11 +99,11 @@ function Notice({ kind, children }: { kind: NoticeKind; children: React.ReactNod
       ? "border-emerald-400/20 bg-emerald-400/10 text-emerald-100"
       : "border-white/10 bg-white/5 text-white/80"
 
-  const Icon = kind === "error" ? AlertTriangle : Info
+  const Icon = kind === "error" ? AlertTriangle : kind === "success" ? ShieldCheck : Info
 
   return (
     <div className={clsx("mt-4 flex items-start gap-2 rounded-2xl border p-4 text-sm", styles)}>
-      <Icon className="mt-0.5 h-4 w-4" />
+      <Icon className="mt-0.5 h-4 w-4 shrink-0" />
       <div className="leading-relaxed">{children}</div>
     </div>
   )
@@ -106,11 +120,6 @@ function pickErrorMessage(anyErr: any): string {
   return "Bir hata oluştu."
 }
 
-/**
- * ✅ IMPORTANT:
- * useSearchParams() -> Suspense içinde olmalı (Next.js CSR bailout kuralı)
- * Bu yüzden hook'u iç component'e taşıdık.
- */
 function GirisInner() {
   const router = useRouter()
   const sp = useSearchParams()
@@ -132,10 +141,10 @@ function GirisInner() {
       const remembered = localStorage.getItem(LS_EMAIL_KEY)
       if (remembered) setEmail(remembered)
     } catch {}
+
     emailRef.current?.focus()
   }, [])
 
-  // ⌘K / Ctrl+K → /sikayet-yaz
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
@@ -160,9 +169,13 @@ function GirisInner() {
     setNotice(null)
 
     const v = validate()
-    if (v) return setErr(v)
+    if (v) {
+      setErr(v)
+      return
+    }
 
     setLoading(true)
+
     try {
       const payload = { email: email.trim(), password: pass }
 
@@ -174,20 +187,22 @@ function GirisInner() {
 
       const data = await res.json().catch(() => null)
 
-      if (!res.ok) throw data || { message: `Giriş başarısız (${res.status})` }
+      if (!res.ok) {
+        throw data || { message: `Giriş başarısız (${res.status})` }
+      }
 
       const accessToken = data?.accessToken
       const user = data?.user
 
-      if (!accessToken || !user) throw { message: "Sunucudan beklenmeyen cevap geldi." }
+      if (!accessToken || !user) {
+        throw { message: "Sunucudan beklenmeyen cevap geldi." }
+      }
 
-      // remember email (not auth!)
       try {
         if (remember) localStorage.setItem(LS_EMAIL_KEY, email.trim())
         else localStorage.removeItem(LS_EMAIL_KEY)
       } catch {}
 
-      // persist auth
       try {
         localStorage.setItem(LS_AUTH_TOKEN_KEY, accessToken)
         localStorage.setItem(LS_AUTH_USER_KEY, JSON.stringify(user))
@@ -203,7 +218,7 @@ function GirisInner() {
   }
 
   return (
-    <div className="relative min-h-screen bg-[#0B1020] text-slate-100">
+    <div className="relative min-h-screen overflow-x-hidden bg-[#0B1020] text-slate-100">
       <style jsx global>{`
         .no-scrollbar::-webkit-scrollbar {
           display: none;
@@ -214,7 +229,6 @@ function GirisInner() {
         }
       `}</style>
 
-      {/* 🌌 BG */}
       <div className="pointer-events-none fixed inset-0 -z-10">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_10%,rgba(99,102,241,0.22),transparent_45%),radial-gradient(circle_at_80%_20%,rgba(16,185,129,0.20),transparent_40%),radial-gradient(circle_at_50%_90%,rgba(249,115,22,0.16),transparent_50%)]" />
         <div
@@ -230,46 +244,50 @@ function GirisInner() {
         <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/60" />
       </div>
 
-      {/* ✅ TOPBAR (GENEL) */}
-      <PublicTopbar subtitle="Giriş" hideAuthButtons disableWhileLoading={loading} nextUrlForAuth={nextUrl} />
+      <PublicTopbar
+        subtitle="Giriş"
+        hideAuthButtons
+        disableWhileLoading={loading}
+        nextUrlForAuth={nextUrl}
+      />
 
-      {/* CONTENT */}
-      <main className="mx-auto w-full max-w-screen-2xl px-4 pb-14 pt-8 sm:px-6 sm:pb-16 sm:pt-10 lg:px-10 2xl:px-14">
+      <main className="mx-auto w-full max-w-screen-2xl px-4 pb-14 pt-6 sm:px-6 sm:pb-16 sm:pt-10 lg:px-10 2xl:px-14">
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
-          {/* LEFT */}
           <div className="lg:col-span-5">
             <div className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-white/10 bg-white/10 px-3 py-1.5 text-[12px] text-white/85 shadow-sm backdrop-blur sm:w-auto sm:justify-start">
               <ShieldCheck className="h-4 w-4 text-emerald-300" />
               Güvenli giriş • Şifreler korunur
             </div>
 
-            <h1 className="mt-4 text-[34px] font-extrabold leading-[1.06] tracking-tight text-white sm:text-[44px] md:text-[52px]">
+            <h1 className="mt-4 text-[32px] font-extrabold leading-[1.06] tracking-tight text-white sm:text-[44px] md:text-[52px]">
               Tekrar hoş geldin
             </h1>
+
             <p className="mt-3 max-w-xl text-sm leading-relaxed text-white/70">
               Giriş yaptığında kişisel alanın, yorumların ve takip ettiğin içerikler burada olur.
             </p>
 
-            <div className="mt-6 rounded-[26px] border border-white/10 bg-white/5 p-5 backdrop-blur sm:p-6">
+            <div className="mt-6 rounded-[22px] border border-white/10 bg-white/5 p-5 backdrop-blur sm:rounded-[26px] sm:p-6">
               <div className="text-sm font-semibold text-white/90">İpucu</div>
-              <div className="mt-2 text-sm text-white/70 leading-relaxed">
+              <div className="mt-2 text-sm leading-relaxed text-white/70">
                 Hızlı erişim için <span className="font-semibold text-white/90">⌘K</span> /{" "}
                 <span className="font-semibold text-white/90">Ctrl+K</span> ile sorun yazma ekranını açabilirsin.
               </div>
 
-              <div className="mt-4 text-sm text-white/70 break-words">
-                Başarılı girişten sonra yönlendirme: <span className="font-semibold text-white/90">{nextUrl}</span>
+              <div className="mt-4 break-words text-sm text-white/70">
+                Başarılı girişten sonra yönlendirme:{" "}
+                <span className="font-semibold text-white/90">{nextUrl}</span>
               </div>
 
-              <div className="mt-4 text-xs text-white/55 break-words">
-                Login endpoint: <span className="text-white/80 font-semibold">{API_BASE}/api/auth/login</span>
+              <div className="mt-4 break-words text-xs text-white/55">
+                Login endpoint:{" "}
+                <span className="font-semibold text-white/80">{API_BASE}/api/auth/login</span>
               </div>
             </div>
           </div>
 
-          {/* RIGHT CARD */}
           <div className="lg:col-span-7">
-            <div className="relative overflow-hidden rounded-[30px] border border-white/10 bg-white/5 p-5 shadow-[0_35px_120px_-90px_rgba(0,0,0,0.85)] backdrop-blur sm:rounded-[34px] sm:p-7">
+            <div className="relative overflow-hidden rounded-[24px] border border-white/10 bg-white/5 p-5 shadow-[0_35px_120px_-90px_rgba(0,0,0,0.85)] backdrop-blur sm:rounded-[34px] sm:p-7">
               <div className="pointer-events-none absolute inset-0 opacity-70 [background-image:radial-gradient(circle_at_15%_15%,rgba(99,102,241,0.26),transparent_50%),radial-gradient(circle_at_85%_35%,rgba(16,185,129,0.20),transparent_55%),radial-gradient(circle_at_50%_120%,rgba(249,115,22,0.16),transparent_55%)]" />
               <div className="pointer-events-none absolute inset-0 opacity-[0.20] [background-image:linear-gradient(to_right,rgba(255,255,255,0.08)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.08)_1px,transparent_1px)] [background-size:28px_28px]" />
 
@@ -348,7 +366,7 @@ function GirisInner() {
                     </Link>
                   </div>
 
-                  <div className="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-2">
+                  <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
                     <PillButton type="submit" variant="secondary" disabled={loading} className="w-full">
                       {loading ? "Giriş yapılıyor…" : "Giriş Yap"}
                       <ArrowRight className="h-4 w-4" />
@@ -364,7 +382,7 @@ function GirisInner() {
                     </PillButton>
                   </div>
 
-                  <div className="mt-3 text-xs leading-relaxed text-white/55">
+                  <div className="text-xs leading-relaxed text-white/55">
                     Devam ederek{" "}
                     <Link href="/kurallar" className="text-white/75 hover:text-white">
                       Kurallar
@@ -376,8 +394,8 @@ function GirisInner() {
                     metinlerini kabul etmiş olursun.
                   </div>
 
-                  <div className="mt-3 flex items-start gap-2 rounded-2xl border border-white/10 bg-white/5 p-4 text-xs text-white/70">
-                    <ShieldCheck className="mt-0.5 h-4 w-4 text-emerald-300" />
+                  <div className="flex items-start gap-2 rounded-2xl border border-white/10 bg-white/5 p-4 text-xs text-white/70">
+                    <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-emerald-300" />
                     <div className="leading-relaxed">
                       Şifren hiçbir zaman düz metin olarak saklanmaz. Giriş denemeleri güvenlik için sınırlanabilir.
                     </div>
@@ -398,7 +416,6 @@ function GirisInner() {
 }
 
 function GirisFallback() {
-  // Suspense fallback: minimal ama tasarımı bozmayalım
   return (
     <div className="min-h-screen bg-[#0B1020] text-white">
       <div className="mx-auto w-full max-w-screen-2xl px-4 py-10 sm:px-6 lg:px-10 2xl:px-14">
