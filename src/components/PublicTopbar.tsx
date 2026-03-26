@@ -252,7 +252,7 @@ export default function PublicTopbar({
           <div className="flex min-w-0 items-center gap-4">
             <Link href="/" className="flex min-w-0 items-center gap-3">
               <Image
-                src="/logo.png"
+                src="/logo_1.png"
                 alt="SorPlus"
                 width={140}
                 height={40}
