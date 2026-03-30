@@ -187,6 +187,27 @@ export default function Footer() {
       muted: true,
     })
 
+    let trendSource = complaints?.slice(5, 12) || []
+
+    if (trendSource.length === 0 && complaints.length > 0) {
+      trendSource = complaints.slice(0, 7)
+    }
+
+    const trendLinks: FooterLinkItem[] = trendSource.map((c) => ({
+      label: c?.title || "Trend Şikayet",
+      href: `/sikayetler/${c.id}`,
+    }))
+
+    if (trendLinks.length === 0) {
+      trendLinks.push({ label: "Trend Şikayetler", href: "/sikayetler" })
+    }
+
+    trendLinks.push({
+      label: "Tüm Trendler",
+      href: "/sikayetler",
+      muted: true,
+    })
+
     const categoryLinks: FooterLinkItem[] = (categories?.slice(0, 9) || []).map((cat) => {
       const name = cat?.name || "Kategori"
       const slug = (cat?.slug || "").trim()
@@ -214,15 +235,7 @@ export default function Footer() {
       },
       {
         title: "Trend100",
-        links: [
-          { label: "Recom Alacak Yönetimi • Ücret / iletişim problemi", href: "/sikayetler/t7" },
-          { label: "Rufus Concept • İade ve gecikme şikayetleri", href: "/sikayetler/t8" },
-          { label: "Anket Et • Üyelik iptali / ücret iadesi", href: "/sikayetler/t9" },
-          { label: "0850 512 07 45 • İstenmeyen aramalar", href: "/sikayetler/t10" },
-          { label: "Buzlu Turizm • Sefer iptali / bilet iadesi", href: "/sikayetler/t11" },
-          { label: "ORIS Telekom • Hat taşıma / fatura itirazı", href: "/sikayetler/t12" },
-          { label: "Şok Net • Paket düşümü / hız sorunu", href: "/sikayetler/t13" },
-        ],
+        links: trendLinks,
       },
       {
         title: "Kategoriler",
@@ -296,8 +309,8 @@ export default function Footer() {
                 <div className="mt-2 text-[12px] text-white/40">Kategoriler yüklenemedi</div>
               ) : null}
 
-              {col.title === "Sorunlar" && cmpErr ? (
-                <div className="mt-2 text-[12px] text-white/40">Sorunlar yüklenemedi</div>
+              {(col.title === "Sorunlar" || col.title === "Trend100") && cmpErr ? (
+                <div className="mt-2 text-[12px] text-white/40">Şikayetler yüklenemedi</div>
               ) : null}
 
               <div className="mt-4 space-y-2.5 sm:space-y-3">
