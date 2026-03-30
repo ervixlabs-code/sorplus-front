@@ -253,7 +253,7 @@ export default function Footer() {
           <div className="flex justify-start">
             <Link href="/" className="inline-flex items-center">
               <Image
-                src="/logo.png"
+                src="/logo_1.png"
                 alt="SorPlus"
                 width={150}
                 height={44}
